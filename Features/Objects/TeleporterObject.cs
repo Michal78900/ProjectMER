@@ -100,7 +100,7 @@ public class TeleporterObject : MonoBehaviour
 
     private TeleporterObject GetTarget()
     {
-        return TeleportersFromId[Base.TargetTeleporters.RandomItem().Id];
+        return TeleportersFromId[Base.Targets.RandomItem()];
     }
 
     private bool TryGetTarget(out TeleporterObject teleporterObject)
@@ -130,12 +130,12 @@ public class TeleporterObject : MonoBehaviour
 
     private void Start()
     {
-        TeleportersFromId.Add(Base.TeleporterId, this);
+        TeleportersFromId.Add(Base.Id, this);
     }
 
     private void OnDestroy()
     {
-        TeleportersFromId.Remove(Base.TeleporterId);
+        TeleportersFromId.Remove(Base.Id);
     }
 
     private bool CanBeTeleported(Collider collider)

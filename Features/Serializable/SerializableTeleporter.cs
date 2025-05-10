@@ -18,21 +18,23 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
     /// <summary>
     /// Gets or sets the teleporter ID for this teleporter.
     /// </summary>
-    public int TeleporterId
+    public int Id
     {
         get => teleporterId;
         set
         {
-            if (TeleporterObject.TeleportersFromId.ContainsKey(value))
+            if (TeleporterObject.TeleportersFromId.ContainsKey(value) || value < 1)
             {
-                teleporterId = value;
+                return;
             }
+
+            teleporterId = value;
         }
     }
 
-    public List<TargetTeleporter> TargetTeleporters { get; set; } = new List<TargetTeleporter>()
+    public List<int> Targets { get; set; } = new List<int>()
     {
-        new TargetTeleporter(),
+
     };
 
     public float Cooldown { get; set; } = 10f;
