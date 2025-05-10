@@ -17,7 +17,7 @@ public class MapEditorObject : MonoBehaviour
 
 	public Room Room { get; protected set; }
 
-	public virtual MapEditorObject Init(SerializableObject serializableObject, string mapName, string id, Room room)
+	public MapEditorObject Init(SerializableObject serializableObject, string mapName, string id, Room room)
 	{
 		Base = serializableObject;
 		MapName = mapName;

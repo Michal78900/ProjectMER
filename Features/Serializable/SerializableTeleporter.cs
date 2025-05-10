@@ -12,7 +12,23 @@ namespace ProjectMER.Features.Serializable;
 
 public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
 {
-    public int TeleporterId { get; set; }
+
+    private int teleporterId;
+
+    /// <summary>
+    /// Gets or sets the teleporter ID for this teleporter.
+    /// </summary>
+    public int TeleporterId
+    {
+        get => teleporterId;
+        set
+        {
+            if (TeleporterObject.TeleportersFromId.ContainsKey(value))
+            {
+                teleporterId = value;
+            }
+        }
+    }
 
     public List<TargetTeleporter> TargetTeleporters { get; set; } = new List<TargetTeleporter>()
     {
@@ -31,6 +47,13 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
         primitive.transform.SetPositionAndRotation(position, rotation);
         primitive.transform.localScale = Scale;
 
+        primitive.AddComponent<TeleporterObject>().Base = this;
+
+        if (primitive.TryGetComponent(out BoxCollider collider))
+        {
+            collider.isTrigger = true;
+        }
+
         return primitive;
     }
 
@@ -47,7 +70,7 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
 
         primitive.PrimitiveFlags = PrimitiveFlags.Visible;
         primitive.PrimitiveType = PrimitiveType.Cube;
-        Color transparentColor = "#03fcec".GetColorFromString();
+        Color transparentColor = new Color(0.11f, 0.98f, 0.92f, 0.5f);
 
         primitive.NetworkMaterialColor = transparentColor;
 
@@ -57,4 +80,3 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
         return primitive.gameObject;
     }
 }
-

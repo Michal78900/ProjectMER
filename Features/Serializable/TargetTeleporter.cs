@@ -8,6 +8,11 @@ namespace ProjectMER.Features.Serializable;
 
 public class TargetTeleporter
 {
+    public override string ToString()
+    {
+        return $"ID: {Id}, Chance: {Chance}";
+    }
+
     public TargetTeleporter()
     {
 
@@ -19,7 +24,7 @@ public class TargetTeleporter
         Chance = chance;
     }
 
-    public int Id { get; set; }
+    public int Id { get; set; } = -1;
 
     public float Chance { get; set; } = 100.0f;
 }
