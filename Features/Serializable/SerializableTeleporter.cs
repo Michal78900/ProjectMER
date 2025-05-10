@@ -23,25 +23,15 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
 
     public override GameObject SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
     {
-        PrimitiveObjectToy primitive = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab) : instance.GetComponent<PrimitiveObjectToy>();
+        GameObject primitive = instance == null ? GameObject.CreatePrimitive(PrimitiveType.Cube) : instance;
         Vector3 position = room.GetAbsolutePosition(Position);
         Quaternion rotation = room.GetAbsoluteRotation(Rotation);
         _prevIndex = Index;
 
         primitive.transform.SetPositionAndRotation(position, rotation);
         primitive.transform.localScale = Scale;
-        primitive.NetworkMovementSmoothing = 60;
 
-        primitive.NetworkMaterialColor = Color.white;
-        primitive.PrimitiveType = PrimitiveType.Cube;
-        primitive.PrimitiveFlags = PrimitiveFlags.Collidable;
-
-        if (instance == null)
-        {
-            NetworkServer.Spawn(primitive.gameObject);
-        }
-
-        return primitive.gameObject;
+        return primitive;
     }
 
     public GameObject SpawnOrUpdateIndicator(Room room, GameObject? instance = null)
@@ -57,7 +47,7 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
 
         primitive.PrimitiveFlags = PrimitiveFlags.Visible;
         primitive.PrimitiveType = PrimitiveType.Cube;
-        Color transparentColor = new Color(0.1f, 0.1f, 0.7f, 0.5f);
+        Color transparentColor = "#03fcec".GetColorFromString();
 
         primitive.NetworkMaterialColor = transparentColor;
 
