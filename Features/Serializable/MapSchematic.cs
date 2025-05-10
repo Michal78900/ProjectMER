@@ -33,6 +33,8 @@ public class MapSchematic
 	public Dictionary<string, SerializableCapybara> Capybaras { get; set; } = [];
 
 	public Dictionary<string, SerializableSchematic> Schematics { get; set; } = [];
+	
+	public Dictionary<string, SerializableTeleporter> Teleporters { get; set; } = [];
 
 	public List<MapEditorObject> SpawnedObjects = [];
 
@@ -45,6 +47,7 @@ public class MapSchematic
 		PlayerSpawnpoints.AddRange(other.PlayerSpawnpoints);
 		Capybaras.AddRange(other.Capybaras);
 		Schematics.AddRange(other.Schematics);
+		Teleporters.AddRange(other.Teleporters);
 
 		return this;
 	}
@@ -73,6 +76,7 @@ public class MapSchematic
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Schematics.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Teleporters.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 	}
 
 	public void SpawnObject<T>(string id, T serializableObject) where T : SerializableObject
@@ -128,6 +132,9 @@ public class MapSchematic
 
 		if (Schematics.TryAdd(id, serializableObject))
 			return true;
+		
+        if (Teleporters.TryAdd(id, serializableObject))
+            return true;
 
 		return false;
 	}
@@ -153,6 +160,9 @@ public class MapSchematic
 			return true;
 
 		if (Schematics.Remove(id))
+			return true;
+		
+		if (Teleporters.Remove(id))
 			return true;
 
 		return false;
