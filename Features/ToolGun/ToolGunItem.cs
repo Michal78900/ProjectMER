@@ -26,6 +26,7 @@ public class ToolGunItem
 		{ ToolGunObjectType.PlayerSpawnpoint, typeof(SerializablePlayerSpawnpoint) },
 		{ ToolGunObjectType.Capybara, typeof(SerializableCapybara) },
 		{ ToolGunObjectType.Schematic, typeof(SerializableSchematic) },
+		{ ToolGunObjectType.Teleporter, typeof(SerializableTeleporter) },
 	};
 
 	private ToolGunObjectType _selectedObjectToSpawn;
