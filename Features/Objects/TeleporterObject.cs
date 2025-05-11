@@ -23,7 +23,7 @@ public class TeleporterObject : MonoBehaviour
     /// <summary>
     /// Gets a value indicating whether this teleporter is currently usable.
     /// </summary>
-    public bool IsUsable { get => DateTime.Now > WhenWillBeUsable; }
+    public bool IsUsable => DateTime.Now > WhenWillBeUsable;
 
     /// <summary>
     /// Gets or sets the base <see cref="SerializableTeleporter"/> for this object.
@@ -31,15 +31,11 @@ public class TeleporterObject : MonoBehaviour
     public SerializableTeleporter Base { get; set; }
 
     /// <summary>
-    /// Gets or sets the global position of this object.
+    /// Gets or sets the global position of the object.
     /// </summary>
     public Vector3 Position
     {
-        get
-        {
-            return transform.position;
-        }
-
+        get => transform.position;
         set
         {
             transform.position = value;
@@ -47,15 +43,11 @@ public class TeleporterObject : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets or sets the global rotation of this object.
+    /// Gets or sets the global rotation of the object.
     /// </summary>
     public Quaternion Rotation
     {
-        get
-        {
-            return transform.rotation;
-        }
-
+        get => transform.rotation;
         set
         {
             transform.rotation = value;
@@ -63,31 +55,20 @@ public class TeleporterObject : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets or sets the global euler angles of this object.
+    /// Gets or sets the global euler angles of the object.
     /// </summary>
     public Vector3 EulerAngles
     {
-        get
-        {
-            return Rotation.eulerAngles;
-        }
-
-        set
-        {
-            Rotation = Quaternion.Euler(value);
-        }
+        get => Rotation.eulerAngles;
+        set => Rotation = Quaternion.Euler(value);
     }
 
     /// <summary>
-    /// Gets or sets the localScale for this object.
+    /// Gets or sets the scale of the object.
     /// </summary>
     public Vector3 Scale
     {
-        get
-        {
-            return transform.localScale;
-        }
-
+        get => transform.localScale;
         set
         {
             transform.localScale = value;
