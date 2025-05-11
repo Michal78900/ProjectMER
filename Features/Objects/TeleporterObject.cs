@@ -3,6 +3,7 @@ using LabApi.Features.Wrappers;
 using Mirror;
 using ProjectMER.Features.Serializable;
 using UnityEngine;
+using MEC;
 
 namespace ProjectMER.Features.Objects;
 
@@ -123,9 +124,10 @@ public class TeleporterObject : MonoBehaviour
             return;
         }
 
-        player.Position = target.Position;
         WhenWillBeUsable = DateTime.Now.AddSeconds(Base.Cooldown);
         target.WhenWillBeUsable = DateTime.Now.AddSeconds(target.Base.Cooldown);
+
+        Timing.CallDelayed(0.1f, () => player.Position = target.Position);
     }
 
     private void Start()
