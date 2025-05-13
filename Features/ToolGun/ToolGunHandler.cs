@@ -118,5 +118,5 @@ public static class ToolGunHandler
 
 	public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hit) => Physics.Raycast(origin, direction, out hit, 100f, ToolGunMask.Mask);
 
-	private static readonly CachedLayerMask ToolGunMask = new("Default", "Door");
+	private static readonly CachedLayerMask ToolGunMask = new("Default", "Door", "CCTV");
 }

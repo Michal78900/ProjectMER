@@ -32,6 +32,10 @@ public class MapSchematic
 
 	public Dictionary<string, SerializableCapybara> Capybaras { get; set; } = [];
 
+	public Dictionary<string, SerializableCamera> Cameras { get; set; } = [];
+	
+	public Dictionary<string, SerializableShootingTarget> ShootingTargets { get; set; } = [];
+
 	public Dictionary<string, SerializableSchematic> Schematics { get; set; } = [];
 
 	public List<MapEditorObject> SpawnedObjects = [];
@@ -45,6 +49,8 @@ public class MapSchematic
 		PlayerSpawnpoints.AddRange(other.PlayerSpawnpoints);
 		Capybaras.AddRange(other.Capybaras);
 		Schematics.AddRange(other.Schematics);
+		Cameras.AddRange(other.Cameras);
+		ShootingTargets.AddRange(other.ShootingTargets);
 
 		return this;
 	}
@@ -73,6 +79,8 @@ public class MapSchematic
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Schematics.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Cameras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		ShootingTargets.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 	}
 
 	public void SpawnObject<T>(string id, T serializableObject) where T : SerializableObject
@@ -128,6 +136,12 @@ public class MapSchematic
 
 		if (Schematics.TryAdd(id, serializableObject))
 			return true;
+		
+		if (Cameras.TryAdd(id, serializableObject))
+			return true;
+		
+		if (ShootingTargets.TryAdd(id, serializableObject))
+			return true;
 
 		return false;
 	}
@@ -151,10 +165,16 @@ public class MapSchematic
 
 		if (Capybaras.Remove(id))
 			return true;
-
+		
 		if (Schematics.Remove(id))
 			return true;
 
+		if (Cameras.Remove(id))
+			return true;		
+		
+		if (ShootingTargets.Remove(id))
+			return true;
+		
 		return false;
 	}
 }

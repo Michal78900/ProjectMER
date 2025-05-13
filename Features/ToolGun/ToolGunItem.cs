@@ -2,7 +2,6 @@ using InventorySystem.Items;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.Attachments;
 using InventorySystem.Items.Firearms.Modules;
-using LabApi.Features.Console;
 using LabApi.Features.Wrappers;
 using ProjectMER.Features.Enums;
 using ProjectMER.Features.Extensions;
@@ -26,6 +25,8 @@ public class ToolGunItem
 		{ ToolGunObjectType.PlayerSpawnpoint, typeof(SerializablePlayerSpawnpoint) },
 		{ ToolGunObjectType.Capybara, typeof(SerializableCapybara) },
 		{ ToolGunObjectType.Schematic, typeof(SerializableSchematic) },
+		{ ToolGunObjectType.Camera, typeof(SerializableCamera) },
+		{ ToolGunObjectType.ShootingTarget, typeof(SerializableShootingTarget) },
 	};
 
 	private ToolGunObjectType _selectedObjectToSpawn;
