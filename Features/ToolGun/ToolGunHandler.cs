@@ -1,5 +1,6 @@
 using LabApi.Features.Wrappers;
 using MapGeneration;
+using ProjectMER.Configs;
 using ProjectMER.Features.Enums;
 using ProjectMER.Features.Extensions;
 using ProjectMER.Features.Objects;
@@ -19,6 +20,8 @@ public static class ToolGunHandler
 			return;
 
 		CreateObject(hit.point, objectType, schematicName);
+		if (Config.AutoSelect)
+			SelectObject(player, MapUtils.UntitledMap.SpawnedObjects.Last());
 	}
 
 	public static void CreateObject(Vector3 position, ToolGunObjectType objectType, string schematicName = "")
@@ -118,5 +121,7 @@ public static class ToolGunHandler
 
 	public static bool Raycast(Vector3 origin, Vector3 direction, out RaycastHit hit) => Physics.Raycast(origin, direction, out hit, 100f, ToolGunMask.Mask);
 
-	private static readonly CachedLayerMask ToolGunMask = new("Default", "Door");
+	private static readonly CachedLayerMask ToolGunMask = new("Default", "Door", "CCTV");
+
+	private static Config Config => ProjectMER.Singleton.Config!;
 }

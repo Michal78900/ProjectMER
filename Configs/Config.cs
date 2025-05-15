@@ -1,7 +1,12 @@
+using System.ComponentModel;
+
 namespace ProjectMER.Configs;
 
 public class Config
 {
+	[Description("Whether the object will be auto selected when spawning it.")]
+	public bool AutoSelect { get; set; } = true;
+
 	public List<string> OnWaitingForPlayers { get; set; } = new();
 	public List<string> OnRoundStarted { get; set; } = new();
 	public List<string> OnLczDecontaminationStarted { get; set; } = new();

@@ -20,6 +20,16 @@ public static class PrefabManager
 	public static WorkstationController WorkstationPrefab { get; private set; }
 
 	public static CapybaraToy CapybaraPrefab { get; private set; }
+	
+	public static Scp079CameraToy LczCameraToy { get; private set; }
+	public static Scp079CameraToy HczCameraToy { get; private set; }
+	public static Scp079CameraToy SzCameraToy { get; private set; }
+	public static Scp079CameraToy EzArmCameraToy { get; private set; }
+	public static Scp079CameraToy EzCameraToy { get; private set; }
+	
+	public static ShootingTarget ShootingTargetSport { get; private set; }
+	public static ShootingTarget ShootingTargetDBoy { get; private set; }
+	public static ShootingTarget ShootingTargetBinary { get; private set; }
 
 	public static void RegisterPrefabs()
 	{
@@ -55,6 +65,22 @@ public static class PrefabManager
 						continue;
 				}
 			}
+			
+			if (gameObject.TryGetComponent(out ShootingTarget shootingTarget))
+			{
+				switch (gameObject.name)
+				{
+					case "sportTargetPrefab":
+						ShootingTargetSport = shootingTarget;
+						continue;
+					case "dboyTargetPrefab":
+						ShootingTargetDBoy = shootingTarget;
+						continue;
+					case "binaryTargetPrefab":
+						ShootingTargetBinary = shootingTarget;
+						continue;
+				}
+			}
 
 			if (gameObject.TryGetComponent(out WorkstationController workstationController))
 			{
@@ -66,6 +92,28 @@ public static class PrefabManager
 			{
 				CapybaraPrefab = capybaraToy;
 				continue;
+			}
+			
+			if (gameObject.TryGetComponent(out Scp079CameraToy cameraToy))
+			{
+				switch (gameObject.name)
+				{
+					case "LczCameraToy":
+						LczCameraToy = cameraToy;
+						continue;
+					case "HczCameraToy":
+						HczCameraToy = cameraToy;
+						continue;
+					case "SzCameraToy":
+						SzCameraToy = cameraToy;
+						continue;
+					case "EzArmCameraToy":
+						EzArmCameraToy = cameraToy;
+						continue;
+					case "EzCameraToy":
+						EzCameraToy = cameraToy;
+						continue;
+				}
 			}
 		}
 	}

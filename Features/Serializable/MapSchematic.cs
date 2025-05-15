@@ -32,6 +32,10 @@ public class MapSchematic
 
 	public Dictionary<string, SerializableCapybara> Capybaras { get; set; } = [];
 
+	public Dictionary<string, SerializableScp079Camera> Scp079Cameras { get; set; } = [];
+	
+	public Dictionary<string, SerializableShootingTarget> ShootingTargets { get; set; } = [];
+
 	public Dictionary<string, SerializableSchematic> Schematics { get; set; } = [];
 	
 	public Dictionary<string, SerializableTeleporter> Teleporters { get; set; } = [];
@@ -47,6 +51,8 @@ public class MapSchematic
 		PlayerSpawnpoints.AddRange(other.PlayerSpawnpoints);
 		Capybaras.AddRange(other.Capybaras);
 		Schematics.AddRange(other.Schematics);
+		Scp079Cameras.AddRange(other.Scp079Cameras);
+		ShootingTargets.AddRange(other.ShootingTargets);
 		Teleporters.AddRange(other.Teleporters);
 
 		return this;
@@ -76,6 +82,8 @@ public class MapSchematic
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Schematics.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Scp079Cameras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		ShootingTargets.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Teleporters.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 	}
 
@@ -132,10 +140,16 @@ public class MapSchematic
 
 		if (Schematics.TryAdd(id, serializableObject))
 			return true;
+    
+		if (Scp079Cameras.TryAdd(id, serializableObject))
+			return true;
 		
-        if (Teleporters.TryAdd(id, serializableObject))
-            return true;
-
+		if (ShootingTargets.TryAdd(id, serializableObject))
+			return true;
+    
+    if (Teleporters.TryAdd(id, serializableObject))
+      return true;
+    
 		return false;
 	}
 
@@ -158,13 +172,19 @@ public class MapSchematic
 
 		if (Capybaras.Remove(id))
 			return true;
-
+		
 		if (Schematics.Remove(id))
 			return true;
 		
 		if (Teleporters.Remove(id))
 			return true;
 
+		if (Scp079Cameras.Remove(id))
+			return true;		
+		
+		if (ShootingTargets.Remove(id))
+			return true;
+		
 		return false;
 	}
 }

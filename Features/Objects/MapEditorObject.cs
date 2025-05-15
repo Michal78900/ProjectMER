@@ -1,8 +1,7 @@
-using AdminToys;
 using LabApi.Features.Wrappers;
 using MEC;
-using Mirror;
 using ProjectMER.Features.Serializable;
+using ProjectMER.Features.ToolGun;
 using UnityEngine;
 
 namespace ProjectMER.Features.Objects;
@@ -32,13 +31,20 @@ public class MapEditorObject : MonoBehaviour
 		if (Base.RequiresReloading)
 		{
 			Base._prevIndex = Base.Index;
-			
+			Player? player = ToolGunHandler.PlayerSelectedObjectDict.FirstOrDefault(x => x.Value.Id == Id).Key;
+
 			if (MapUtils.LoadedMaps.TryGetValue(MapName, out MapSchematic map))
 			{
 				map.DestroyObject(Id);
 			}
 
-			Timing.CallDelayed(0.1f, () => map.SpawnObject(Id, Base));
+			Timing.CallDelayed(0.1f, () =>
+			{
+				map.SpawnObject(Id, Base);
+
+				if (player is not null)
+					ToolGunHandler.SelectObject(player, MapUtils.LoadedMaps[MapName].SpawnedObjects.Find(x => x.Id == Id));
+			});
 			return;
 		}
 

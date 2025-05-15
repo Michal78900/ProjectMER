@@ -10,7 +10,7 @@ namespace ProjectMER.Events.Handlers.Internal;
 
 public class GenericEventsHandler : CustomEventsHandler
 {
-    public override void OnServerWaitingForPlayers()
+	public override void OnServerWaitingForPlayers()
 	{
 		PrefabManager.RegisterPrefabs();
 
@@ -53,5 +53,11 @@ public class GenericEventsHandler : CustomEventsHandler
 				Logger.Error(e);
 			}
 		});
+	}
+
+	public override void OnPlayerInteractingShootingTarget(PlayerInteractingShootingTargetEventArgs ev)
+	{
+		if (ev.ShootingTarget.GameObject.TryGetComponent(out MapEditorObject _))
+			ev.IsAllowed = false;
 	}
 }
