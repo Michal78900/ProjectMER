@@ -5,14 +5,14 @@ using ProjectMER.Features.Extensions;
 using ProjectMER.Features.Interfaces;
 using ProjectMER.Features.Objects;
 using UnityEngine;
-using static HarmonyLib.Code;
 using PrimitiveObjectToy = AdminToys.PrimitiveObjectToy;
 
 namespace ProjectMER.Features.Serializable;
 
 public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
 {
-
+    // TODO:
+    // Add proper ID management
     private int teleporterId;
 
     /// <summary>
@@ -32,10 +32,7 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
         }
     }
 
-    public List<int> Targets { get; set; } = new List<int>()
-    {
-
-    };
+    public List<int> Targets { get; set; } = new List<int>();
 
     public float Cooldown { get; set; } = 10f;
 
@@ -49,7 +46,12 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
         primitive.transform.SetPositionAndRotation(position, rotation);
         primitive.transform.localScale = Scale;
 
-        primitive.AddComponent<TeleporterObject>().Base = this;
+        if (!primitive.TryGetComponent(out TeleporterObject teleporter))
+        {
+            teleporter = primitive.AddComponent<TeleporterObject>();
+        }
+
+        teleporter.Base = this;
 
         if (primitive.TryGetComponent(out BoxCollider collider))
         {
