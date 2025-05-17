@@ -78,11 +78,11 @@ public class TeleporterObject : MonoBehaviour
     /// <summary>
     /// Gets a Dictionary to access teleporters by their ID.
     /// </summary>
-    internal static Dictionary<int, TeleporterObject> TeleportersFromId { get; private set; } = new ();
+    internal static List<TeleporterObject> Teleporters { get; private set; } = new ();
 
     private TeleporterObject GetTarget()
     {
-        return TeleportersFromId[Base.Targets.RandomItem()];
+        return Teleporters.FirstOrDefault(t => t.Base.Id == Base.Targets.RandomItem());
     }
 
     private bool TryGetTarget(out TeleporterObject teleporterObject)
@@ -113,12 +113,12 @@ public class TeleporterObject : MonoBehaviour
 
     private void Start()
     {
-        TeleportersFromId.Add(Base.Id, this);
+        Teleporters.Add(this);
     }
 
     private void OnDestroy()
     {
-        TeleportersFromId.Remove(Base.Id);
+        Teleporters.Remove(this);
     }
 
     private bool CanBeTeleported(Collider collider)

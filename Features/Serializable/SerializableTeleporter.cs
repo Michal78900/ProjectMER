@@ -23,11 +23,6 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
         get => teleporterId;
         set
         {
-            if (TeleporterObject.TeleportersFromId.ContainsKey(value) || value < 1)
-            {
-                return;
-            }
-
             teleporterId = value;
         }
     }
