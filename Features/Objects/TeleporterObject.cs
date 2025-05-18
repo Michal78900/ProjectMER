@@ -108,7 +108,19 @@ public class TeleporterObject : MonoBehaviour
         WhenWillBeUsable = DateTime.Now.AddSeconds(Base.Cooldown);
         target.WhenWillBeUsable = DateTime.Now.AddSeconds(target.Base.Cooldown);
 
-        Timing.CallDelayed(0.1f, () => player.Position = target.Position);
+
+        Timing.CallDelayed(0.05f, () =>
+        {
+            player.Position = target.Position;
+            try
+            {
+                player.LookRotation = target.EulerAngles;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        });
     }
 
     private void Start()

@@ -1,6 +1,7 @@
 ﻿using AdminToys;
 using LabApi.Features.Wrappers;
 using Mirror;
+using PlayerRoles;
 using ProjectMER.Features.Extensions;
 using ProjectMER.Features.Interfaces;
 using ProjectMER.Features.Objects;
@@ -58,24 +59,82 @@ public class SerializableTeleporter : SerializableObject, IIndicatorDefinition
 
     public GameObject SpawnOrUpdateIndicator(Room room, GameObject? instance = null)
     {
-        PrimitiveObjectToy primitive = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab) : instance.GetComponent<PrimitiveObjectToy>();
-        Vector3 position = room.GetAbsolutePosition(Position);
+        PrimitiveObjectToy root;
+        PrimitiveObjectToy trigger;
+        PrimitiveObjectToy cylinder;
+        PrimitiveObjectToy arrowY;
+        PrimitiveObjectToy arrowX;
+        PrimitiveObjectToy arrow;
+
+        Vector3 position = room.GetAbsolutePosition(Position - new Vector3(0, 0.5f, 0));
         Quaternion rotation = room.GetAbsoluteRotation(Rotation);
-        _prevIndex = Index;
-
-        primitive.transform.SetPositionAndRotation(position, rotation);
-        primitive.transform.localScale = Scale;
-        primitive.NetworkMovementSmoothing = 60;
-
-        primitive.PrimitiveFlags = PrimitiveFlags.Visible;
-        primitive.PrimitiveType = PrimitiveType.Cube;
-        Color transparentColor = new Color(0.11f, 0.98f, 0.92f, 0.5f);
-
-        primitive.NetworkMaterialColor = transparentColor;
 
         if (instance == null)
-            NetworkServer.Spawn(primitive.gameObject);
+        {
+            root = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+            root.NetworkPrimitiveFlags = PrimitiveFlags.None;
+            root.name = "Indicator";
+            root.transform.position = position;
 
-        return primitive.gameObject;
+            trigger = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+            trigger.NetworkPrimitiveFlags = PrimitiveFlags.Visible;
+            trigger.name = "Trigger";
+            trigger.NetworkPrimitiveType = PrimitiveType.Cube;
+            trigger.transform.localScale = Scale;
+            trigger.transform.position = position + new Vector3(0, 0.5f, 0);
+            trigger.transform.parent = root.transform;
+
+            cylinder = GameObject.Instantiate(PrefabManager.PrimitiveObjectPrefab, root.transform);
+            cylinder.transform.localPosition = Vector3.zero;
+            cylinder.NetworkPrimitiveType = PrimitiveType.Cylinder;
+            cylinder.NetworkPrimitiveFlags = PrimitiveFlags.Visible;
+            cylinder.transform.localScale = new Vector3(1f, 0.001f, 1f);
+
+            arrowY = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+            arrowY.NetworkPrimitiveFlags = PrimitiveFlags.None;
+            arrowY.name = "Arrow Y Axis";
+            arrowY.transform.parent = root.transform;
+
+            arrowX = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+            arrowX.NetworkPrimitiveFlags = PrimitiveFlags.None;
+            arrowX.name = "Arrow X Axis";
+            arrowX.transform.parent = arrowY.transform;
+
+            arrow = GameObject.Instantiate(PrefabManager.PrimitiveObjectPrefab, arrowX.transform);
+            arrow.transform.localPosition = root.transform.forward;
+            arrow.NetworkPrimitiveType = PrimitiveType.Cube;
+            arrow.NetworkPrimitiveFlags = PrimitiveFlags.Visible;
+            arrow.transform.localScale = new Vector3(0.1f, 0.1f, 1f);
+        }
+        else
+        {
+            root = instance.GetComponent<PrimitiveObjectToy>();
+
+            trigger = root.transform.Find("Trigger").GetComponent<PrimitiveObjectToy>();
+            arrowY = root.transform.Find("Arrow Y Axis").GetComponent<PrimitiveObjectToy>();
+            arrowX = arrowY.transform.Find("Arrow X Axis").GetComponent<PrimitiveObjectToy>();
+
+            trigger.transform.localScale = Scale;
+        }
+
+        root.transform.position = position;
+        arrowY.transform.localPosition = Vector3.up * 1.6f;
+        arrowY.transform.localEulerAngles = new Vector3(0f, rotation.eulerAngles.y, 0f);
+        arrowX.transform.localPosition = Vector3.zero;
+        arrowX.transform.localEulerAngles = new Vector3(-rotation.eulerAngles.x, 0f, 0f);
+
+        foreach (PrimitiveObjectToy primitive in root.GetComponentsInChildren<PrimitiveObjectToy>())
+        {
+            if (Targets.Count > 0)
+            {
+                primitive.NetworkMaterialColor = new Color(0.11f, 0.98f, 0.92f, 0.5f);
+            }
+            else
+            {
+                primitive.NetworkMaterialColor = new Color(1f, 1f, 1f, 0.25f);
+            }
+        }
+
+        return root.gameObject;
     }
 }
