@@ -43,9 +43,9 @@ public static class StructExtensions
 		s = s.Trim('(', ')').Replace(" ", "");
 		string[] split = s.Split(',');
 
-		float x = float.Parse(split[0]);
-		float y = float.Parse(split[1]);
-		float z = float.Parse(split[2]);
+		float x = float.Parse(split[0], CultureInfo.InvariantCulture);
+		float y = float.Parse(split[1], CultureInfo.InvariantCulture);
+		float z = float.Parse(split[2], CultureInfo.InvariantCulture);
 
 		return new Vector3(x, y, z);
 	}
