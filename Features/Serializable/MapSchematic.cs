@@ -37,6 +37,8 @@ public class MapSchematic
 	public Dictionary<string, SerializableShootingTarget> ShootingTargets { get; set; } = [];
 
 	public Dictionary<string, SerializableSchematic> Schematics { get; set; } = [];
+	
+	public Dictionary<string, SerializableTeleporter> Teleporters { get; set; } = [];
 
 	public List<MapEditorObject> SpawnedObjects = [];
 
@@ -51,6 +53,7 @@ public class MapSchematic
 		Schematics.AddRange(other.Schematics);
 		Scp079Cameras.AddRange(other.Scp079Cameras);
 		ShootingTargets.AddRange(other.ShootingTargets);
+		Teleporters.AddRange(other.Teleporters);
 
 		return this;
 	}
@@ -81,6 +84,7 @@ public class MapSchematic
 		Schematics.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Scp079Cameras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		ShootingTargets.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Teleporters.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 	}
 
 	public void SpawnObject<T>(string id, T serializableObject) where T : SerializableObject
@@ -136,13 +140,16 @@ public class MapSchematic
 
 		if (Schematics.TryAdd(id, serializableObject))
 			return true;
-		
+    
 		if (Scp079Cameras.TryAdd(id, serializableObject))
 			return true;
 		
 		if (ShootingTargets.TryAdd(id, serializableObject))
 			return true;
-
+    
+    if (Teleporters.TryAdd(id, serializableObject))
+      return true;
+    
 		return false;
 	}
 
@@ -167,6 +174,9 @@ public class MapSchematic
 			return true;
 		
 		if (Schematics.Remove(id))
+			return true;
+		
+		if (Teleporters.Remove(id))
 			return true;
 
 		if (Scp079Cameras.Remove(id))
