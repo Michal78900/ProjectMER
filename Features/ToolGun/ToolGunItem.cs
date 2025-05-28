@@ -20,6 +20,7 @@ public class ToolGunItem
 	{
 		{ ToolGunObjectType.Primitive, typeof(SerializablePrimitive) },
 		{ ToolGunObjectType.Light, typeof(SerializableLight) },
+		{ ToolGunObjectType.Interactable, typeof(SerializableInteractable) },
 		{ ToolGunObjectType.Door, typeof(SerializableDoor) },
 		{ ToolGunObjectType.Workstation, typeof(SerializableWorkstation) },
 		{ ToolGunObjectType.ItemSpawnpoint, typeof(SerializableItemSpawnpoint)},

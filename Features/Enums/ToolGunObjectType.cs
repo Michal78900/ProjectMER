@@ -13,4 +13,5 @@ public enum ToolGunObjectType
 	Scp079Camera = 8,
 	ShootingTarget = 9,
 	Teleport = 10,
+	Interactable = 11,
 }

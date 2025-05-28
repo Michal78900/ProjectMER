@@ -14,6 +14,12 @@ public static class ObjectSpawner
 		return gameObject.GetComponent<PrimitiveObjectToy>();
 	}
 
+	public static InvisibleInteractableToy SpawnInteractable(SerializableInteractable serializableInteractable)
+	{
+		GameObject gameObject = serializableInteractable.SpawnOrUpdateObject();
+		return gameObject.GetComponent<InvisibleInteractableToy>();
+	}
+
 	public static SchematicObject SpawnSchematic(SerializableSchematic serializableSchematic)
 	{
 		GameObject? gameObject = serializableSchematic.SpawnOrUpdateObject();

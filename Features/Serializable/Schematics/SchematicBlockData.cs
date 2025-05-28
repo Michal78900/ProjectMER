@@ -41,6 +41,7 @@ public class SchematicBlockData
 			BlockType.Light => CreateLight(),
 			BlockType.Pickup => CreatePickup(schematicObject),
 			BlockType.Workstation => CreateWorkstation(),
+			BlockType.Interactable => CreateInteractable(),
 			_ => CreateEmpty(true)
 		};
 
@@ -137,5 +138,17 @@ public class SchematicBlockData
 		workstation.NetworkStatus = (byte)(Properties.TryGetValue("IsInteractable", out object isInteractable) && Convert.ToBoolean(isInteractable) ? 0 : 4);
 
 		return workstation.gameObject;
+	}
+
+	private GameObject CreateInteractable()
+	{
+		InvisibleInteractableToy interactableToy = GameObject.Instantiate(PrefabManager.InvisibleInteractableToy);
+		interactableToy.NetworkMovementSmoothing = 60;
+
+		interactableToy.NetworkShape = (InvisibleInteractableToy.ColliderShape)Convert.ToInt32(Properties["Shape"]);
+		interactableToy.NetworkInteractionDuration = float.Parse(Properties["InteractionDuration"].ToString());
+		interactableToy.NetworkIsLocked = bool.Parse(Properties["IsLocked"].ToString());
+
+		return interactableToy.gameObject;
 	}
 }
