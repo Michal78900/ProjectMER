@@ -42,7 +42,10 @@ public class TeleportObject : MonoBehaviour
 		if (NextTimeUse > DateTime.Now)
 			return;
 
-		TeleportObject? target = GetRandomTarget();
+        if (UnityEngine.Random.Range(0, 100) >= Base.Chance)
+            return;
+
+        TeleportObject? target = GetRandomTarget();
 		if (target == null)
 			return;
 

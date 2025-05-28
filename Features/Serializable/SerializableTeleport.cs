@@ -13,9 +13,11 @@ public class SerializableTeleport : SerializableObject, IIndicatorDefinition
 {
 	public List<string> Targets { get; set; } = [];
 
-	public float Cooldown { get; set; } = 5f;
+    public int Chance { get; set; } = 100;
 
-	public override GameObject? SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
+    public float Cooldown { get; set; } = 5f;
+
+    public override GameObject? SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
 	{
 		GameObject gameObject = instance ?? new GameObject("Teleport");
 		Vector3 position = room.GetAbsolutePosition(Position);
