@@ -22,14 +22,25 @@ public class SerializableTeleport : SerializableObject, IIndicatorDefinition
 		Quaternion rotation = room.GetAbsoluteRotation(Rotation);
 		_prevIndex = Index;
 		gameObject.transform.SetLocalPositionAndRotation(position, rotation);
+        BoxCollider collider;
 
-		if (instance == null)
-		{
-			gameObject.AddComponent<BoxCollider>().isTrigger = true;
-			gameObject.AddComponent<TeleportObject>();
-		}
+        if (instance == null)
+        {
+            collider = gameObject.AddComponent<BoxCollider>();
+            collider.isTrigger = true;
+            gameObject.AddComponent<TeleportObject>();
+        }
+        else
+        {
+            collider = gameObject.GetComponent<BoxCollider>();
+        }
 
-		return gameObject;
+        if (collider != null)
+        {
+            collider.size = Scale;
+        }
+
+        return gameObject;
 	}
 
 	public GameObject SpawnOrUpdateIndicator(Room room, GameObject? instance = null)
