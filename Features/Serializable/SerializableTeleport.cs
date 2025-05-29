@@ -15,6 +15,29 @@ public class SerializableTeleport : SerializableObject, IIndicatorDefinition
 
     public int Chance { get; set; } = 100;
 
+    public List<string> AllowedRoles { get; set; } = new List<string>()
+    {
+        "Scp0492",
+        "Scp049",
+        "Scp096",
+        "Scp106",
+        "Scp173",
+        "Scp939",
+        "Scp3114",
+        "ClassD",
+        "Scientist",
+        "FacilityGuard",
+        "NtfPrivate",
+        "NtfSergeant",
+        "NtfSpecialist",
+        "NtfCaptain",
+        "ChaosConscript",
+        "ChaosRifleman",
+        "ChaosRepressor",
+        "ChaosMarauder",
+        "Tutorial",
+    };
+
     public float Cooldown { get; set; } = 5f;
 
     public override GameObject? SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)

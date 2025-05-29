@@ -45,6 +45,9 @@ public class TeleportObject : MonoBehaviour
         if (UnityEngine.Random.Range(0, 100) >= Base.Chance)
             return;
 
+        if (!Base.AllowedRoles.Contains(player.Role.ToString()))
+            return;
+
         TeleportObject? target = GetRandomTarget();
 		if (target == null)
 			return;
