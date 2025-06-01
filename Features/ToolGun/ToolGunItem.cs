@@ -81,10 +81,31 @@ public class ToolGunItem
 		ServerSpecificSettingsSync.DefinedSettings =
 		[
 			new SSGroupHeader("MapEditorReborn"),
-			new SSDropdownSetting(0, "Schematic Name", MapUtils.GetAvailableSchematicNames())
-		];
+			new SSDropdownSetting(0, "Schematic Name", MapUtils.GetAvailableSchematicNames()),
+            new SSDropdownSetting(1, "Map Name", new[] { "None" }.Concat(MapUtils.GetAvailableMapNames()).ToArray()),
+            new SSButton(2, "Load Map", "Load"),
+            new SSButton(3, "Unload Map", "Unload")
+        ];
 
-		ServerSpecificSettingsSync.SendToPlayersConditionally(x => x.inventory.UserInventory.Items.Values.Any(x => x.IsToolGun(out ToolGunItem _)));
+        if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 1, out SSDropdownSetting dropdown))
+        {
+            dropdown.SyncSelectionIndexRaw = 0;
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { dropdown });
+        }
+
+        if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 2, out SSButton loadButton))
+        {
+            loadButton.SyncLastPress.Reset();
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { loadButton });
+        }
+
+        if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 3, out SSButton unloadButton))
+        {
+            unloadButton.SyncLastPress.Reset();
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { unloadButton });
+        }
+
+        ServerSpecificSettingsSync.SendToPlayersConditionally(x => x.inventory.UserInventory.Items.Values.Any(x => x.IsToolGun(out ToolGunItem _)));
 
 		return true;
 	}
@@ -97,7 +118,26 @@ public class ToolGunItem
 			{
 				ItemDictionary.Remove(itemBase.ItemSerial);
 				player.RemoveItem(itemBase);
-				return true;
+
+                if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 1, out SSDropdownSetting dropdown))
+                {
+                    dropdown.SyncSelectionIndexRaw = 0;
+                    ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { dropdown });
+                }
+
+                if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 2, out SSButton loadButton))
+                {
+                    loadButton.SyncLastPress.Reset();
+                    ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { loadButton });
+                }
+
+                if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 3, out SSButton unloadButton))
+                {
+                    unloadButton.SyncLastPress.Reset();
+                    ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { unloadButton });
+                }
+
+                return true;
 			}
 		}
 
