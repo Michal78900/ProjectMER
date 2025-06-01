@@ -13,11 +13,12 @@ namespace ProjectMER.Events.Handlers.Internal;
 public class ToolGunEventsHandler : CustomEventsHandler
 {
     private string lastLoadedMap = "None";
+    private bool? lastIndicatorState = null;
 
     public override void OnServerRoundStarted()
 	{
 		Timing.RunCoroutine(ToolGunGUI());
-        Timing.RunCoroutine(ToolGunLoadUnloadMap());
+        Timing.RunCoroutine(ToolGunMapController());
     }
 
 	private static IEnumerator<float> ToolGunGUI()
@@ -47,7 +48,7 @@ public class ToolGunEventsHandler : CustomEventsHandler
 		}
 	}
 
-    private IEnumerator<float> ToolGunLoadUnloadMap()
+    private IEnumerator<float> ToolGunMapController()
     {
         while (true)
         {
@@ -57,6 +58,25 @@ public class ToolGunEventsHandler : CustomEventsHandler
             {
                 if (!player.CurrentItem.IsToolGun(out ToolGunItem toolGun))
                     continue;
+
+                if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 4, out SSTwoButtonsSetting indicatorToggle))
+                {
+                    bool currentState = indicatorToggle.SyncIsA;
+
+                    if (lastIndicatorState == null || currentState != lastIndicatorState.Value)
+                    {
+                        if (currentState)
+                        {
+                            IndicatorObject.ClearIndicators();
+                        }
+                        else
+                        {
+                            IndicatorObject.RefreshIndicators();
+                        }
+
+                        lastIndicatorState = currentState;
+                    }
+                }
 
                 if (!ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 1, out SSDropdownSetting dropdown))
                     continue;
