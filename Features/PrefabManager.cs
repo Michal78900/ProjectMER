@@ -20,7 +20,9 @@ public static class PrefabManager
 	public static WorkstationController WorkstationPrefab { get; private set; }
 
 	public static CapybaraToy CapybaraPrefab { get; private set; }
-	
+		
+	public static TextToy TextPrefab {get; private set;}
+
 	public static Scp079CameraToy LczCameraToy { get; private set; }
 	public static Scp079CameraToy HczCameraToy { get; private set; }
 	public static Scp079CameraToy SzCameraToy { get; private set; }
@@ -114,6 +116,12 @@ public static class PrefabManager
 						EzCameraToy = cameraToy;
 						continue;
 				}
+			}
+
+			if (gameObject.TryGetComponent(out TextToy textToy))
+			{
+				TextPrefab = textToy;
+				continue;
 			}
 		}
 	}

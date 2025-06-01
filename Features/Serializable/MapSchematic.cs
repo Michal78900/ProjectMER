@@ -36,6 +36,8 @@ public class MapSchematic
 
 	public Dictionary<string, SerializableCapybara> Capybaras { get; set; } = [];
 
+	public Dictionary<string, SerializableText> Texts { get; set; } = [];
+
 	public Dictionary<string, SerializableScp079Camera> Scp079Cameras { get; set; } = [];
 
 	public Dictionary<string, SerializableShootingTarget> ShootingTargets { get; set; } = [];
@@ -55,6 +57,7 @@ public class MapSchematic
 		ItemSpawnpoints.AddRange(other.ItemSpawnpoints);
 		PlayerSpawnpoints.AddRange(other.PlayerSpawnpoints);
 		Capybaras.AddRange(other.Capybaras);
+		Texts.AddRange(other.Texts);
 		Schematics.AddRange(other.Schematics);
 		Scp079Cameras.AddRange(other.Scp079Cameras);
 		ShootingTargets.AddRange(other.ShootingTargets);
@@ -87,6 +90,7 @@ public class MapSchematic
 		ItemSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Texts.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Schematics.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Scp079Cameras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		ShootingTargets.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
@@ -150,6 +154,9 @@ public class MapSchematic
 		if (Capybaras.TryAdd(id, serializableObject))
 			return true;
 
+		if (Texts.TryAdd(id, serializableObject))
+			return true;
+
 		if (Schematics.TryAdd(id, serializableObject))
 			return true;
 
@@ -190,6 +197,9 @@ public class MapSchematic
 			return true;
 
 		if (Capybaras.Remove(id))
+			return true;
+
+		if (Texts.Remove(id))
 			return true;
 
 		if (Schematics.Remove(id))

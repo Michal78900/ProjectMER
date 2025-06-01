@@ -10,7 +10,8 @@ public enum ToolGunObjectType
 	ItemSpawnpoint = 5,
 	PlayerSpawnpoint = 6,
 	Capybara = 7,
-	Scp079Camera = 8,
-	ShootingTarget = 9,
-	Teleport = 10,
+	Text = 8,
+	Scp079Camera = 9,
+	ShootingTarget = 10,
+	Teleport = 11,
 }
