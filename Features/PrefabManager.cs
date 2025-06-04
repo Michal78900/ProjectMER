@@ -11,6 +11,8 @@ public static class PrefabManager
 	public static PrimitiveObjectToy PrimitiveObjectPrefab { get; private set; }
 
 	public static LightSourceToy LightSourcePrefab { get; private set; }
+	
+	public static InvisibleInteractableToy InvisibleInteractableToy { get; private set; }
 
 	public static DoorVariant LczDoorPrefab { get; private set; }
 	public static DoorVariant HczDoorPrefab { get; private set; }
@@ -46,6 +48,12 @@ public static class PrefabManager
 			if (gameObject.TryGetComponent(out LightSourceToy lightSourceToy))
 			{
 				LightSourcePrefab = lightSourceToy;
+				continue;
+			}
+			
+			if (gameObject.TryGetComponent(out InvisibleInteractableToy invisibleInteractableToy))
+			{
+				InvisibleInteractableToy = invisibleInteractableToy;
 				continue;
 			}
 
