@@ -36,8 +36,18 @@ public class SerializableSchematic : SerializableObject
 		}
 
 		return schematic.gameObject;
-	}
+  }
+  public SchematicObjectDataList? Data
+  {
+    get
+    {
+      return _data ??= MapUtils.TryGetSchematicDataByName(SchematicName, out SchematicObjectDataList data) ? data : null;
+    }
+    set
+    {
+      _data = value;
+    }
+  }
 
-	private SchematicObjectDataList? Data => _data ??= MapUtils.TryGetSchematicDataByName(SchematicName, out SchematicObjectDataList data) ? data : null;
 	private SchematicObjectDataList? _data;
 }
