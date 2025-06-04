@@ -15,4 +15,10 @@ public static class DictionaryExtensions
 
 		return false;
 	}
+
+	public static void AddRange<DictKey, DictValue>(this Dictionary<DictKey, DictValue> dictionary, Dictionary<DictKey, DictValue> other)
+	{
+		foreach (KeyValuePair<DictKey, DictValue> kVP in other)
+			dictionary.Add(kVP.Key, kVP.Value);
+	}
 }

@@ -26,8 +26,7 @@ public static class ToolGunHandler
 
 	public static void CreateObject(Vector3 position, ToolGunObjectType objectType, string schematicName = "")
 	{
-		if (!Room.TryGetRoomAtPosition(position, out Room? room))
-			room = Room.List.First(x => x.Name == RoomName.Outside);
+		Room room = RoomExtensions.GetRoomAtPosition(position);
 
 		position = room.Name == RoomName.Outside ? position : room.Transform.InverseTransformPoint(position);
 		string roomId = room.GetRoomStringId();
@@ -121,6 +120,24 @@ public static class ToolGunHandler
 		}
 
 		PlayerSelectedObjectDict[player] = mapEditorObject;
+	}
+
+	public static bool TryGetObjectById(string id, out MapEditorObject mapEditorObject)
+	{
+		foreach (MapSchematic map in MapUtils.LoadedMaps.Values)
+		{
+			foreach (MapEditorObject meo in map.SpawnedObjects)
+			{
+				if (meo.Id == id)
+				{
+					mapEditorObject = meo;
+					return true;
+				}
+			}
+		}
+
+		mapEditorObject = null!;
+		return false;
 	}
 
 	public static bool Raycast(Player player, out RaycastHit hit) => Raycast(player.Camera.position, player.Camera.forward, out hit);

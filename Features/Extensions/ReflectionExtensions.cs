@@ -46,6 +46,16 @@ public static class ReflectionExtensions
 				string colorString = property.GetValue(instance).ToString();
 				yield return $"{property.Name}: <color={colorString.GetColorFromString().ToHex()}><b>{colorString}</b></color>";
 			}
+			else if (property.Name == "Text")
+			{
+				StringBuilder sb = StringBuilderPool.Shared.Rent(property.GetValue(instance).ToString());
+				if (sb.Length > 32)
+				{
+					sb.Remove(32, sb.Length - 32);
+					sb.Append("...");
+				}
+				yield return $"{property.Name}: <noparse>{StringBuilderPool.Shared.ToStringReturn(sb)}</noparse>";
+			}
 			else if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
 			{
 				StringBuilder sb = StringBuilderPool.Shared.Rent();

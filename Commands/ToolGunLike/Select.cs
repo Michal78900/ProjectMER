@@ -1,7 +1,9 @@
 using CommandSystem;
 using LabApi.Features.Permissions;
 using LabApi.Features.Wrappers;
+using ProjectMER.Features;
 using ProjectMER.Features.Objects;
+using ProjectMER.Features.Serializable;
 using ProjectMER.Features.ToolGun;
 
 namespace ProjectMER.Commands.ToolGunLike;
@@ -32,6 +34,20 @@ public class Select : ICommand
 		if (player is null)
 		{
 			response = "This command can't be run from the server console.";
+			return false;
+		}
+
+		if (arguments.Count > 0)
+		{
+			string id = arguments.At(0);
+			if (ToolGunHandler.TryGetObjectById(id, out MapEditorObject idObject))
+			{
+				ToolGunHandler.SelectObject(player, idObject);
+				response = "You've successfully selected the object!";
+				return true;
+			}
+
+			response = $"Unable to find object with ID of {id}!";
 			return false;
 		}
 

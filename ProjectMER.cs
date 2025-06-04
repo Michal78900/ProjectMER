@@ -1,5 +1,6 @@
 global using Logger = LabApi.Features.Console.Logger;
 
+using HarmonyLib;
 using LabApi.Events.CustomHandlers;
 using LabApi.Loader.Features.Paths;
 using LabApi.Loader.Features.Plugins;
@@ -10,6 +11,8 @@ namespace ProjectMER;
 
 public class ProjectMER : Plugin<Config>
 {
+	private Harmony _harmony;
+
 	public static ProjectMER Singleton { get; private set; }
 
 	/// <summary>
@@ -31,13 +34,15 @@ public class ProjectMER : Plugin<Config>
 
 	public ToolGunEventsHandler ToolGunEventsHandler { get; } = new();
 
-	public MapOnEventHandlers MapOnEventHandlers { get; } = new();
+	public ActionOnEventHandlers AcionOnEventHandlers { get; } = new();
 
 	public PickupEventsHandler PickupEventsHandler { get; } = new();
 
 	public override void Enable()
 	{
 		Singleton = this;
+		_harmony = new Harmony($"michal78900.mapEditorReborn-{DateTime.Now.Ticks}");
+		_harmony.PatchAll();
 
 		PluginDir = Path.Combine(PathManager.Configs.FullName, "ProjectMER");
 		MapsDir = Path.Combine(PluginDir, "Maps");
@@ -48,7 +53,7 @@ public class ProjectMER : Plugin<Config>
 			Logger.Warn("Plugin directory does not exist. Creating...");
 			Directory.CreateDirectory(PluginDir);
 		}
-		
+
 		if (!Directory.Exists(MapsDir))
 		{
 			Logger.Warn("Maps directory does not exist. Creating...");
@@ -63,17 +68,18 @@ public class ProjectMER : Plugin<Config>
 
 		CustomHandlersManager.RegisterEventsHandler(GenericEventsHandler);
 		CustomHandlersManager.RegisterEventsHandler(ToolGunEventsHandler);
-		CustomHandlersManager.RegisterEventsHandler(MapOnEventHandlers);
+		CustomHandlersManager.RegisterEventsHandler(AcionOnEventHandlers);
 		CustomHandlersManager.RegisterEventsHandler(PickupEventsHandler);
 	}
 
 	public override void Disable()
 	{
 		Singleton = null!;
+		_harmony.UnpatchAll();
 
 		CustomHandlersManager.UnregisterEventsHandler(GenericEventsHandler);
 		CustomHandlersManager.UnregisterEventsHandler(ToolGunEventsHandler);
-		CustomHandlersManager.UnregisterEventsHandler(MapOnEventHandlers);
+		CustomHandlersManager.UnregisterEventsHandler(AcionOnEventHandlers);
 		CustomHandlersManager.UnregisterEventsHandler(PickupEventsHandler);
 	}
 
@@ -83,7 +89,7 @@ public class ProjectMER : Plugin<Config>
 
 	public override string Author => "Michal78900";
 
-	public override Version Version => new Version(2025, 5, 27, 1);
+	public override Version Version => new Version(2025, 6, 2, 2);
 
 	public override Version RequiredApiVersion => new Version(1, 0, 0, 0);
 }

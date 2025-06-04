@@ -32,6 +32,20 @@ public class Delete : ICommand
 			return false;
 		}
 
+		if (arguments.Count > 0)
+		{
+			string id = arguments.At(0);
+			if (ToolGunHandler.TryGetObjectById(id, out MapEditorObject idObject))
+			{
+				ToolGunHandler.DeleteObject(idObject);
+				response = "You've successfully deleted the object!";
+				return true;
+			}
+
+			response = $"Unable to find object with ID of {id}!";
+			return false;
+		}
+
 		if (ToolGunHandler.TryGetMapObject(player, out MapEditorObject mapEditorObject))
 		{
 			ToolGunHandler.DeleteObject(mapEditorObject);
