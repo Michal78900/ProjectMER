@@ -6,7 +6,7 @@ using YamlDotNet.Serialization;
 
 namespace ProjectMER.Features;
 
-public sealed class VectorConverter : IYamlTypeConverter
+public class VectorConverter : IYamlTypeConverter
 {
 	/// <inheritdoc cref="IYamlTypeConverter" />
 	public bool Accepts(Type type) => type == typeof(Vector3);
