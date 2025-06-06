@@ -6,11 +6,11 @@ namespace ProjectMER.Commands.Utility.MapConverter.OldMapEditorRebornCodes.OldSe
     [Serializable]
     public class OldLightSource
     {
-        public string Color { get; set; }
-        public float Intensity { get; set; }
-        public float Range { get; set; }
-        public bool Shadows { get; set; }
+        public string Color { get; set; } = "white";
+        public float Intensity { get; set; } = 1f;
+        public float Range { get; set; } = 1f;
+        public bool Shadows { get; set; } = true;
         public Vector3 Position { get; set; }
-        public OldRoomType RoomType { get; set; }
+        public OldRoomType RoomType { get; set; } = OldRoomType.Unknown;
     }
 }

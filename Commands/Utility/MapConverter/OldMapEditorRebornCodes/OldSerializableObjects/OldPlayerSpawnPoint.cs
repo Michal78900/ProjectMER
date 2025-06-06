@@ -8,6 +8,6 @@ namespace ProjectMER.Commands.Utility.MapConverter.OldMapEditorRebornCodes.OldSe
     {
         public OldSpawnableTeam SpawnableTeam { get; set; }
         public Vector3 Position { get; set; }
-        public OldRoomType RoomType { get; set; }
+        public OldRoomType RoomType { get; set; } = OldRoomType.Unknown;
     }
 }

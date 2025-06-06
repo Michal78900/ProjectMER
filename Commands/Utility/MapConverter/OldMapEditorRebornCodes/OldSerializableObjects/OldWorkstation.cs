@@ -6,10 +6,10 @@ namespace ProjectMER.Commands.Utility.MapConverter.OldMapEditorRebornCodes.OldSe
     [Serializable]
     public class OldWorkstation
     {
-        public bool IsInteractable { get; set; }
+        public bool IsInteractable { get; set; } = true;
         public Vector3 Position { get; set; }
         public Vector3 Rotation { get; set; }
-        public Vector3 Scale { get; set; }
-        public OldRoomType RoomType { get; set; }
+        public Vector3 Scale { get; set; } = Vector3.one;
+        public OldRoomType RoomType { get; set; } = OldRoomType.Unknown;
     }
 }

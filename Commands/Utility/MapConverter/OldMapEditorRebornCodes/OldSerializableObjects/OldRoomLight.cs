@@ -5,9 +5,9 @@ namespace ProjectMER.Commands.Utility.MapConverter.OldMapEditorRebornCodes.OldSe
     [Serializable]
     public class OldRoomLight
     {
-        public string Color { get; set; }
+        public string Color { get; set; } = "red";
         public float ShiftSpeed { get; set; }
-        public bool OnlyWarheadLight { get; set; }
-        public OldRoomType RoomType { get; set; }
+        public bool OnlyWarheadLight { get; set; } = false;
+        public OldRoomType RoomType { get; set; } = OldRoomType.Unknown;
     }
 }

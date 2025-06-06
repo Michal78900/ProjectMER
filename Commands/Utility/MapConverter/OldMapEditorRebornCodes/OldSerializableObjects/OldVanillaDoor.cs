@@ -5,12 +5,11 @@ namespace ProjectMER.Commands.Utility.MapConverter.OldMapEditorRebornCodes.OldSe
     [Serializable]
     public class OldVanillaDoor
     {
-        public OldDoorType DoorType { get; set; }
-        public bool IsOpen { get; set; }
-        public bool IsLocked { get; set; }
+        public bool IsOpen { get; set; } = false;
+        public bool IsLocked { get; set; } = false;
         public OldKeycardPermissions KeycardPermissions { get; set; }
-        public OldDoorDamageType IgnoredDamageSources { get; set; }
-        public float DoorHealth { get; set; }
-        public OldLockOnEvent LockOnEvent { get; set; }
+        public OldDoorDamageType IgnoredDamageSources { get; set; } = OldDoorDamageType.Weapon;
+        public float DoorHealth { get; set; } = 150f;
+        public OldLockOnEvent LockOnEvent { get; set; } = OldLockOnEvent.None;
     }
 }
