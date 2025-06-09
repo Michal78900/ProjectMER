@@ -44,4 +44,9 @@ public enum BlockType
 	/// Represents a locker.
 	/// </summary>
 	Locker = 7,
+	
+	/// <summary>
+	/// Represents a Interactable.
+	/// </summary>
+	Interactable = 8,
 }

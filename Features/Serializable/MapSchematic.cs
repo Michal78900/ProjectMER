@@ -24,6 +24,8 @@ public class MapSchematic
 	public Dictionary<string, SerializablePrimitive> Primitives { get; set; } = [];
 
 	public Dictionary<string, SerializableLight> Lights { get; set; } = [];
+	
+	public Dictionary<string, SerializableInteractable> Interactables { get; set; } = [];
 
 	public Dictionary<string, SerializableDoor> Doors { get; set; } = [];
 
@@ -51,6 +53,7 @@ public class MapSchematic
 	{
 		Primitives.AddRange(other.Primitives);
 		Lights.AddRange(other.Lights);
+		Interactables.AddRange(other.Interactables);
 		Doors.AddRange(other.Doors);
 		Workstations.AddRange(other.Workstations);
 		ItemSpawnpoints.AddRange(other.ItemSpawnpoints);
@@ -74,6 +77,7 @@ public class MapSchematic
 
 		Primitives.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Lights.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Interactables.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Doors.ForEach(kVP =>
 		{
 			Door? vanillaDoor = Door.Get(kVP.Key);

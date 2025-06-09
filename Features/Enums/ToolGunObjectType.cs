@@ -11,7 +11,8 @@ public enum ToolGunObjectType
 	PlayerSpawnpoint = 6,
 	Capybara = 7,
 	Text = 8,
-	Scp079Camera = 9,
-	ShootingTarget = 10,
-	Teleport = 11,
+  	Interactable = 9,
+	Scp079Camera = 10,
+	ShootingTarget = 11,
+	Teleport = 12,
 }
