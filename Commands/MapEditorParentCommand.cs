@@ -9,6 +9,7 @@ using ProjectMER.Commands.Modifying.Rotation;
 using ProjectMER.Commands.Modifying.Scale;
 using ProjectMER.Commands.ToolGunLike;
 using ProjectMER.Commands.Utility;
+using ProjectMER.Commands.Utility.MapConverter;
 
 namespace ProjectMER.Commands;
 
@@ -28,22 +29,24 @@ public class MapEditorParentCommand : ParentCommand
 
 	public override void LoadGeneratedCommands()
 	{
-		RegisterCommand(new Save());
-		RegisterCommand(new Load());
-		RegisterCommand(new Unload());
-		RegisterCommand(new ToggleToolGun());
-		RegisterCommand(new List());
-		RegisterCommand(new Indicators());
-		RegisterCommand(new Merge());
+        RegisterCommand(new Load());
+        RegisterCommand(new Save());
+        RegisterCommand(new Unload());
 
-		RegisterCommand(new Position());
-		RegisterCommand(new Rotation());
-		RegisterCommand(new Scale());
-		RegisterCommand(new Modify());
+        RegisterCommand(new Position());
+        RegisterCommand(new Rotation());
+        RegisterCommand(new Scale());
+        RegisterCommand(new Modify());
 
-		RegisterCommand(new Create());
-		RegisterCommand(new Delete());
-		RegisterCommand(new Select());
+        RegisterCommand(new Create());
+        RegisterCommand(new Delete());
+        RegisterCommand(new Select());
+
+        RegisterCommand(new Indicators());
+        RegisterCommand(new List());
+        RegisterCommand(new MapConverter());
+        RegisterCommand(new Merge());
+        RegisterCommand(new ToggleToolGun());
 	}
 
 	protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
