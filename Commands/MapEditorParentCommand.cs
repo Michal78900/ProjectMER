@@ -54,7 +54,7 @@ public class MapEditorParentCommand : ParentCommand
 
 		foreach (ICommand command in AllCommands)
 		{
-			if (sender.HasAnyPermission($"mpr.{command.Command}"))
+			if (sender.HasAnyPermission($"mpr.{command.Command}") && !ProjectMER.EventUsage())
 			{
 				sb.Append($"\n\n<color=yellow><b>- {command.Command} ({string.Join(", ", command.Aliases)})</b></color>\n<color=white>{command.Description}</color>");
 			}

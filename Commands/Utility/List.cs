@@ -28,7 +28,7 @@ public class List : ICommand
 	/// <inheritdoc/>
 	public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
 	{
-		if (!sender.HasAnyPermission($"mpr.{Command}"))
+		if (!sender.HasAnyPermission($"mpr.{Command}") && !ProjectMER.EventUsage())
 		{
 			response = $"You don't have permission to execute this command. Required permission: mpr.{Command}";
 			return false;

@@ -23,7 +23,7 @@ public class Bring : ICommand
 	/// <inheritdoc/>
 	public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
 	{
-		if (!sender.HasAnyPermission($"mpr.position"))
+		if (!sender.HasAnyPermission($"mpr.position") && !ProjectMER.EventUsage())
 		{
 			response = $"You don't have permission to execute this command. Required permission: mpr.position";
 			return false;

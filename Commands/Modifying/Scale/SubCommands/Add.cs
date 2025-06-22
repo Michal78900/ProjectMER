@@ -22,7 +22,7 @@ public class Add : ICommand
 	/// <inheritdoc/>
 	public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
 	{
-		if (!sender.HasAnyPermission($"mpr.scale"))
+		if (!sender.HasAnyPermission($"mpr.scale") && !ProjectMER.EventUsage())
 		{
 			response = $"You don't have permission to execute this command. Required permission: mpr.scale";
 			return false;
