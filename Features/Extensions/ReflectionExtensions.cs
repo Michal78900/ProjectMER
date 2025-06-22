@@ -46,11 +46,22 @@ public static class ReflectionExtensions
 				string colorString = property.GetValue(instance).ToString();
 				yield return $"{property.Name}: <color={colorString.GetColorFromString().ToHex()}><b>{colorString}</b></color>";
 			}
+			else if (property.Name == "Text")
+			{
+				StringBuilder sb = StringBuilderPool.Shared.Rent(property.GetValue(instance).ToString());
+				if (sb.Length > 32)
+				{
+					sb.Remove(32, sb.Length - 32);
+					sb.Append("...");
+				}
+				yield return $"{property.Name}: <noparse>{StringBuilderPool.Shared.ToStringReturn(sb)}</noparse>";
+			}
 			else if (typeof(ICollection).IsAssignableFrom(property.PropertyType))
 			{
 				StringBuilder sb = StringBuilderPool.Shared.Rent();
 				ICollection collection = (ICollection)property.GetValue(instance);
-				if (collection.GetType().GetGenericArguments()[0].IsEnum)
+				Type collectionType = collection.GetType().GetGenericArguments()[0];
+				if (collectionType.IsEnum)
 				{
 					foreach (object? item in collection)
 						sb.Append($"{item} ");
@@ -61,13 +72,17 @@ public static class ReflectionExtensions
 					sb.Insert(0, "<color=yellow><b>");
 					sb.Append("</b></color>");
 				}
-				else
+				else if (collectionType == typeof(string))
 				{
 					foreach (object? item in collection)
 						sb.Append($"{MapUtils.GetColoredString(item.ToString())} ");
 
 					if (sb.Length > 0)
 						sb.Remove(sb.Length - 1, 1);
+				}
+				else
+				{
+					sb.Append($"<color=yellow><b>{collection.Count}</b></color>");
 				}
 
 				yield return $"{property.Name}: {StringBuilderPool.Shared.ToStringReturn(sb)}";

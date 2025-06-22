@@ -16,7 +16,7 @@ public class SerializableWorkstation : SerializableObject
 
 	public override GameObject SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
 	{
-		WorkstationController workstation = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.WorkstationPrefab) : instance.GetComponent<WorkstationController>();
+		WorkstationController workstation = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.Workstation) : instance.GetComponent<WorkstationController>();
 		Vector3 position = room.GetAbsolutePosition(Position);
 		Quaternion rotation = room.GetAbsoluteRotation(Rotation);
 		_prevIndex = Index;

@@ -10,7 +10,7 @@ public class SerializableCapybara : SerializableObject
 {
 	public override GameObject SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
 	{
-		CapybaraToy capybara = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.CapybaraPrefab) : instance.GetComponent<CapybaraToy>();
+		CapybaraToy capybara = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.Capybara) : instance.GetComponent<CapybaraToy>();
 		Vector3 position = room.GetAbsolutePosition(Position);
 		Quaternion rotation = room.GetAbsoluteRotation(Rotation);
 		_prevIndex = Index;

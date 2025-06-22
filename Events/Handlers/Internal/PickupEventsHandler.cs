@@ -11,7 +11,7 @@ namespace ProjectMER.Events.Handlers.Internal;
 
 public class PickupEventsHandler : CustomEventsHandler
 {
-	internal static readonly Dictionary<ushort, SchematicObject>  ButtonPickups = [];
+	internal static readonly Dictionary<ushort, SchematicObject> ButtonPickups = [];
 	internal static readonly Dictionary<ushort, int> PickupUsesLeft = [];
 
 	public override void OnPlayerSearchingPickup(PlayerSearchingPickupEventArgs ev)
@@ -62,6 +62,15 @@ public class PickupEventsHandler : CustomEventsHandler
 	{
 		if (!ev.Pickup.Transform.TryGetComponentInParent(out MapEditorObject _))
 			return;
+
+		if (!PickupUsesLeft.ContainsKey(ev.Pickup.Serial))
+			return;
+
+		if (--PickupUsesLeft[ev.Pickup.Serial] == 0)
+		{
+			PickupUsesLeft.Remove(ev.Pickup.Serial);
+			return;
+		}
 
 		ev.IsAllowed = false;
 		ev.Pickup.IsInUse = false;

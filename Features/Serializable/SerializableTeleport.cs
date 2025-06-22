@@ -45,12 +45,12 @@ public class SerializableTeleport : SerializableObject, IIndicatorDefinition
 
 		if (instance == null)
 		{
-			root = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+			root = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObject);
 			root.NetworkPrimitiveFlags = PrimitiveFlags.None;
 			root.name = "Indicator";
 			root.transform.position = position;
 
-			trigger = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+			trigger = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObject);
 			trigger.NetworkPrimitiveFlags = PrimitiveFlags.Visible;
 			trigger.name = "Trigger";
 			trigger.NetworkPrimitiveType = PrimitiveType.Cube;
@@ -58,17 +58,17 @@ public class SerializableTeleport : SerializableObject, IIndicatorDefinition
 			trigger.transform.position = position;
 			trigger.transform.parent = root.transform;
 
-			arrowY = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+			arrowY = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObject);
 			arrowY.NetworkPrimitiveFlags = PrimitiveFlags.None;
 			arrowY.name = "Arrow Y Axis";
 			arrowY.transform.parent = root.transform;
 
-			arrowX = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+			arrowX = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObject);
 			arrowX.NetworkPrimitiveFlags = PrimitiveFlags.None;
 			arrowX.name = "Arrow X Axis";
 			arrowX.transform.parent = arrowY.transform;
 
-			arrow = GameObject.Instantiate(PrefabManager.PrimitiveObjectPrefab, arrowX.transform);
+			arrow = GameObject.Instantiate(PrefabManager.PrimitiveObject, arrowX.transform);
 			arrow.transform.localPosition = root.transform.forward;
 			arrow.NetworkPrimitiveType = PrimitiveType.Cube;
 			arrow.NetworkPrimitiveFlags = PrimitiveFlags.Visible;

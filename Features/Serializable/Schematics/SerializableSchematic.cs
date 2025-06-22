@@ -17,7 +17,7 @@ public class SerializableSchematic : SerializableObject
 		if (Data == null)
 			return null;
 
-		PrimitiveObjectToy schematic = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab) : instance.GetComponent<PrimitiveObjectToy>();
+		PrimitiveObjectToy schematic = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObject) : instance.GetComponent<PrimitiveObjectToy>();
 		schematic.NetworkPrimitiveFlags = PrimitiveFlags.None;
 		schematic.NetworkMovementSmoothing = 60;
 

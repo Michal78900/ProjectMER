@@ -58,7 +58,7 @@ public class SchematicBlockData
 		if (fallback)
 			Logger.Warn($"{BlockType} is not yet implemented. Object will be an empty GameObject instead.");
 
-		PrimitiveObjectToy primitive = GameObject.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+		PrimitiveObjectToy primitive = GameObject.Instantiate(PrefabManager.PrimitiveObject);
 		primitive.NetworkPrimitiveFlags = PrimitiveFlags.None;
 		primitive.NetworkMovementSmoothing = 60;
 
@@ -67,7 +67,7 @@ public class SchematicBlockData
 
 	private GameObject CreatePrimitive()
 	{
-		PrimitiveObjectToy primitive = GameObject.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+		PrimitiveObjectToy primitive = GameObject.Instantiate(PrefabManager.PrimitiveObject);
 		primitive.NetworkMovementSmoothing = 60;
 
 		primitive.NetworkPrimitiveType = (PrimitiveType)Convert.ToInt32(Properties["PrimitiveType"]);
@@ -93,7 +93,7 @@ public class SchematicBlockData
 
 	private GameObject CreateLight()
 	{
-		LightSourceToy light = GameObject.Instantiate(PrefabManager.LightSourcePrefab);
+		LightSourceToy light = GameObject.Instantiate(PrefabManager.LightSource);
 		light.NetworkMovementSmoothing = 60;
 
 		light.NetworkLightType = Properties.TryGetValue("LightType", out object lightType) ? (LightType)Convert.ToInt32(lightType) : LightType.Point;
@@ -132,7 +132,7 @@ public class SchematicBlockData
 
 	private GameObject CreateWorkstation()
 	{
-		WorkstationController workstation = GameObject.Instantiate(PrefabManager.WorkstationPrefab);
+		WorkstationController workstation = GameObject.Instantiate(PrefabManager.Workstation);
 		workstation.NetworkStatus = (byte)(Properties.TryGetValue("IsInteractable", out object isInteractable) && Convert.ToBoolean(isInteractable) ? 0 : 4);
 
 		return workstation.gameObject;

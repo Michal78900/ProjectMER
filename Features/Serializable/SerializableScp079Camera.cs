@@ -53,11 +53,11 @@ public class SerializableScp079Camera : SerializableObject
 		{
 			Scp079CameraToy prefab = CameraType switch
 			{
-				CameraType.Lcz => PrefabManager.LczCameraToy,
-				CameraType.Hcz => PrefabManager.HczCameraToy,
-				CameraType.Ez => PrefabManager.EzCameraToy,
-				CameraType.EzArm => PrefabManager.EzArmCameraToy,
-				CameraType.Sz => PrefabManager.SzCameraToy,
+				CameraType.Lcz => PrefabManager.CameraLcz,
+				CameraType.Hcz => PrefabManager.CameraHcz,
+				CameraType.Ez => PrefabManager.CameraEz,
+				CameraType.EzArm => PrefabManager.CameraEzArm,
+				CameraType.Sz => PrefabManager.CameraSz,
 				_ => throw new InvalidOperationException(),
 			};
 

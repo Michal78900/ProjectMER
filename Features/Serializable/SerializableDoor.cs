@@ -58,10 +58,10 @@ public class SerializableDoor : SerializableObject
 		{
 			DoorVariant prefab = DoorType switch
 			{
-				DoorType.Lcz => PrefabManager.LczDoorPrefab,
-				DoorType.Hcz => PrefabManager.HczDoorPrefab,
-				DoorType.Ez => PrefabManager.EzDoorPrefab,
-				DoorType.Bulkdoor => PrefabManager.BulkDoorPrefab,
+				DoorType.Lcz => PrefabManager.DoorLcz,
+				DoorType.Hcz => PrefabManager.DoorHcz,
+				DoorType.Ez => PrefabManager.DoorEz,
+				DoorType.Bulkdoor => PrefabManager.DoorHeavyBulk,
 				_ => throw new InvalidOperationException(),
 			};
 

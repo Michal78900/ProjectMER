@@ -76,7 +76,7 @@ public class SerializableItemSpawnpoint : SerializableObject, IIndicatorDefiniti
 
 		if (instance == null)
 		{
-			cube = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObjectPrefab);
+			cube = UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObject);
 			cube.NetworkPrimitiveType = PrimitiveType.Cube;
 			cube.NetworkPrimitiveFlags = AdminToys.PrimitiveFlags.Visible;
 			cube.NetworkMaterialColor = new Color(0f, 1f, 0f, 0.9f);

@@ -1,8 +1,8 @@
 using LabApi.Features.Wrappers;
-using MonoMod.Utils;
 using NorthwoodLib.Pools;
 using ProjectMER.Features.Extensions;
 using ProjectMER.Features.Objects;
+using ProjectMER.Features.Serializable.Lockers;
 using ProjectMER.Features.Serializable.Schematics;
 using UnityEngine;
 using Utils.NonAllocLINQ;
@@ -36,6 +36,8 @@ public class MapSchematic
 
 	public Dictionary<string, SerializableCapybara> Capybaras { get; set; } = [];
 
+	public Dictionary<string, SerializableText> Texts { get; set; } = [];
+
 	public Dictionary<string, SerializableScp079Camera> Scp079Cameras { get; set; } = [];
 
 	public Dictionary<string, SerializableShootingTarget> ShootingTargets { get; set; } = [];
@@ -43,6 +45,8 @@ public class MapSchematic
 	public Dictionary<string, SerializableSchematic> Schematics { get; set; } = [];
 
 	public Dictionary<string, SerializableTeleport> Teleports { get; set; } = [];
+
+	public Dictionary<string, SerializableLocker> Lockers { get; set; } = [];
 
 	public List<MapEditorObject> SpawnedObjects = [];
 
@@ -55,10 +59,12 @@ public class MapSchematic
 		ItemSpawnpoints.AddRange(other.ItemSpawnpoints);
 		PlayerSpawnpoints.AddRange(other.PlayerSpawnpoints);
 		Capybaras.AddRange(other.Capybaras);
+		Texts.AddRange(other.Texts);
 		Schematics.AddRange(other.Schematics);
 		Scp079Cameras.AddRange(other.Scp079Cameras);
 		ShootingTargets.AddRange(other.ShootingTargets);
 		Teleports.AddRange(other.Teleports);
+		Lockers.AddRange(other.Lockers);
 
 		return this;
 	}
@@ -87,10 +93,16 @@ public class MapSchematic
 		ItemSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Texts.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Schematics.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Scp079Cameras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		ShootingTargets.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Teleports.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Lockers.ForEach(kVP =>
+		{
+			kVP.Value._prevType = kVP.Value.LockerType;
+			SpawnObject(kVP.Key, kVP.Value);
+		});
 	}
 
 	public void SpawnObject<T>(string id, T serializableObject) where T : SerializableObject
@@ -150,6 +162,9 @@ public class MapSchematic
 		if (Capybaras.TryAdd(id, serializableObject))
 			return true;
 
+		if (Texts.TryAdd(id, serializableObject))
+			return true;
+
 		if (Schematics.TryAdd(id, serializableObject))
 			return true;
 
@@ -160,6 +175,9 @@ public class MapSchematic
 			return true;
 
 		if (Teleports.TryAdd(id, serializableObject))
+			return true;
+
+		if (Lockers.TryAdd(id, serializableObject))
 			return true;
 
 		IsDirty = dirtyPrevValue;
@@ -192,6 +210,9 @@ public class MapSchematic
 		if (Capybaras.Remove(id))
 			return true;
 
+		if (Texts.Remove(id))
+			return true;
+
 		if (Schematics.Remove(id))
 			return true;
 
@@ -202,6 +223,9 @@ public class MapSchematic
 			return true;
 
 		if (Teleports.Remove(id))
+			return true;
+
+		if (Lockers.Remove(id))
 			return true;
 		
 		IsDirty = dirtyPrevValue;

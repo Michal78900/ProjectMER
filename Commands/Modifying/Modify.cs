@@ -75,15 +75,44 @@ public class Modify : ICommand
 			return true;
 		}
 
-		if (arguments.Count < 2)
+		string propertyName = arguments.At(0).ToUpperInvariant();
+		if (propertyName.Contains("MAP"))
+			return HandleMap(out response);
+		else if (propertyName == "ID")
+			return HandleId(out response);
+
+		PropertyInfo? foundProperty = properties.FirstOrDefault(x => x.Name.ToUpperInvariant().Contains(propertyName));
+		if (foundProperty == null)
 		{
-			response = "Not enough arguments!";
+			response = $"There isn't any object property that contains \"{arguments.At(0)}\" in it's name!";
 			return false;
 		}
 
-		string propertyName = arguments.At(0).ToUpperInvariant();
-		if (propertyName.Contains("MAP"))
+		bool result;
+		if (typeof(ICollection).IsAssignableFrom(foundProperty.PropertyType))
+			result = HandleCollection(out response);
+		else if (foundProperty.PropertyType != typeof(string))
+			result = HandleNonString(out response);
+		else result = HandleString(out response);
+
+		if (!result)
+			return false;
+
+		mapEditorObject.UpdateObjectAndCopies();
+		response = "You've successfully modified the object!";
+		return true;
+
+
+
+
+		bool HandleMap(out string response)
 		{
+			if (arguments.Count < 2)
+			{
+				response = "Not enough arguments!";
+				return false;
+			}
+
 			string newMapName = arguments.At(1);
 			if (mapEditorObject.MapName == newMapName)
 			{
@@ -115,8 +144,15 @@ public class Modify : ICommand
 			response = "You've successfully modified the object's map!";
 			return true;
 		}
-		else if (propertyName == "ID")
+
+		bool HandleId(out string response)
 		{
+			if (arguments.Count < 2)
+			{
+				response = "Not enough arguments!";
+				return false;
+			}
+
 			string newId = arguments.At(1);
 
 			if (mapEditorObject.Map.SpawnedObjects.Any(x => x.Id == newId))
@@ -131,29 +167,6 @@ public class Modify : ICommand
 			response = "You've successfully modified the object's ID!";
 			return true;
 		}
-
-		PropertyInfo? foundProperty = properties.FirstOrDefault(x => x.Name.ToUpperInvariant().Contains(propertyName));
-		if (foundProperty == null)
-		{
-			response = $"There isn't any object property that contains \"{arguments.At(0)}\" in it's name!";
-			return false;
-		}
-
-		bool result;
-		if (typeof(ICollection).IsAssignableFrom(foundProperty.PropertyType))
-			result = HandleCollection(out response);
-		else if (foundProperty.PropertyType != typeof(string))
-			result = HandleNonString(out response);
-		else result = HandleString(out response);
-
-		if (!result)
-			return false;
-
-		mapEditorObject.UpdateObjectAndCopies();
-		response = "You've successfully modified the object!";
-		return true;
-
-
 
 		bool HandleCollection(out string response)
 		{
@@ -211,6 +224,12 @@ public class Modify : ICommand
 
 		bool HandleNonString(out string response)
 		{
+			if (arguments.Count < 2 && !foundProperty.PropertyType.IsEnum)
+			{
+				response = $"You need to provide a {foundProperty.PropertyType} value!";
+				return false;
+			}
+
 			try
 			{
 				object value = TypeDescriptor.GetConverter(foundProperty.PropertyType).ConvertFromInvariantString(arguments.At(1));
@@ -221,7 +240,7 @@ public class Modify : ICommand
 				StringBuilder sb = StringBuilderPool.Shared.Rent();
 				if (arguments.Count > 1)
 				{
-					sb.Append($"\"{arguments.At(1)}\" is not a valid argument!");
+					sb.Append($"\"{arguments.At(1)}\" is not a valid argument! The value should be a {foundProperty.PropertyType} type.");
 				}
 
 				if (foundProperty.PropertyType.IsEnum)
