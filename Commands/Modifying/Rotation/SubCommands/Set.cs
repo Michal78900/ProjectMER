@@ -25,7 +25,7 @@ public class Set : ICommand
 	/// <inheritdoc/>
 	public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
 	{
-		if (!sender.HasAnyPermission($"mpr.rotation"))
+		if (!sender.HasAnyPermission($"mpr.rotation") && !ProjectMER.EventUsage())
 		{
 			response = $"You don't have permission to execute this command. Required permission: mpr.rotation";
 			return false;

@@ -1,4 +1,4 @@
-using System.IO.Enumeration;
+using ApiLib.Utils.String;
 using LabApi.Events.Arguments.WarheadEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Wrappers;
@@ -81,8 +81,8 @@ public class ActionOnEventHandlers : CustomEventsHandler
 
 		foreach (string mapName in allMaps)
 		{
-			if (FileSystemName.MatchesSimpleExpression(argument, mapName))
-				MapUtils.LoadMap(mapName);
+            if (argument.Equals(mapName, StringComparison.InvariantCultureIgnoreCase))
+                MapUtils.LoadMap(mapName);
 		}
 	}
 
@@ -103,7 +103,7 @@ public class ActionOnEventHandlers : CustomEventsHandler
 
 		foreach (string mapName in allMaps)
 		{
-			if (FileSystemName.MatchesSimpleExpression(argument, mapName))
+			if (argument.Equals(mapName, StringComparison.InvariantCultureIgnoreCase))
 				MapUtils.UnloadMap(mapName);
 		}
 	}

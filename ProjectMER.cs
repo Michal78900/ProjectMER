@@ -1,5 +1,5 @@
 global using Logger = LabApi.Features.Console.Logger;
-
+using ApiLib.Library;
 using HarmonyLib;
 using LabApi.Events.CustomHandlers;
 using LabApi.Loader.Features.Paths;
@@ -44,8 +44,6 @@ public class ProjectMER : Plugin<Config>
 	public override void Enable()
 	{
 		Singleton = this;
-		_harmony = new Harmony($"michal78900.mapEditorReborn-{DateTime.Now.Ticks}");
-		_harmony.PatchAll();
 
 		PluginDir = Path.Combine(PathManager.Configs.FullName, "ProjectMER");
 		MapsDir = Path.Combine(PluginDir, "Maps");
@@ -74,7 +72,7 @@ public class ProjectMER : Plugin<Config>
 		CustomHandlersManager.RegisterEventsHandler(AcionOnEventHandlers);
 		CustomHandlersManager.RegisterEventsHandler(PickupEventsHandler);
 
-		_harmony = new Harmony($"michal78900.mapEditorReborn-{DateTime.Now.Ticks}");
+		_harmony = new Harmony(nameof(ProjectMER));
 		_harmony.PatchAll();
 
 		if (Config!.EnableFileSystemWatcher)
@@ -98,7 +96,7 @@ public class ProjectMER : Plugin<Config>
 		if (!MapUtils.LoadedMaps.ContainsKey(mapName))
 			return;
 
-		Timing.CallDelayed(0.01f, () =>
+		Timing.CallDelayed(0f, () =>
 		{
 			try
 			{
@@ -131,7 +129,12 @@ public class ProjectMER : Plugin<Config>
 
 	public override string Author => "Michal78900";
 
-	public override Version Version => new Version(2025, 6, 19, 1);
+	public override Version Version => new Version(2025, 6, 22, 0);
 
 	public override Version RequiredApiVersion => new Version(1, 0, 0, 0);
+	
+	public static bool EventUsage()
+	{
+		return ServerInfo.EventOngoing;
+	}
 }
