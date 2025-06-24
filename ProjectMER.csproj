@@ -1,31 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <LangVersion>12</LangVersion>
-    <TargetFramework>net4.8</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<LangVersion>12</LangVersion>
+	<TargetFramework>net4.8</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="UnityEngine" HintPath="$(SL_REFERENCES)\UnityEngine.dll" />
-    <Reference Include="UnityEngine.AnimationModule" HintPath="$(SL_REFERENCES)\UnityEngine.AnimationModule.dll" />
-    <Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" />
-    <Reference Include="UnityEngine.AssetBundleModule" HintPath="$(SL_REFERENCES)\UnityEngine.AssetBundleModule.dll" />
-    <Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" />
-    <Reference Include="Unity.TextMeshPro" HintPath="$(SL_REFERENCES)\Unity.TextMeshPro.dll" />
-    <Reference Include="Mirror" HintPath="$(SL_REFERENCES)\Mirror.dll" />
-    <Reference Include="Assembly-CSharp" HintPath="$(SL_REFERENCES)\Assembly-CSharp-Publicized.dll" />
-    <Reference Include="Assembly-CSharp-firstpass" HintPath="$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll" />
-	  <Reference Include="CommandSystem.Core" HintPath="$(SL_REFERENCES)\CommandSystem.Core.dll" />
-    <Reference Include="YamlDotNet" HintPath="$(SL_REFERENCES)\YamlDotNet.dll" />
-    <Reference Include="NorthwoodLib" HintPath="$(SL_REFERENCES)\NorthwoodLib.dll" />
-    <Reference Include="LabApi" HintPath="$(SL_REFERENCES)\LabApi.dll" />
+	<Reference Include="mscorlib" HintPath="$(SL_REFERENCES)\mscorlib.dll" />
+	<Reference Include="System.ComponentModel.DataAnnotations" HintPath="$(SL_REFERENCES)\System.ComponentModel.DataAnnotations.dll" />
+	<Reference Include="UnityEngine" HintPath="$(SL_REFERENCES)\UnityEngine.dll" />
+	<Reference Include="UnityEngine.AnimationModule" HintPath="$(SL_REFERENCES)\UnityEngine.AnimationModule.dll" />
+	<Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" />
+	<Reference Include="UnityEngine.AssetBundleModule" HintPath="$(SL_REFERENCES)\UnityEngine.AssetBundleModule.dll" />
+	<Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" />
+	<Reference Include="Unity.TextMeshPro" HintPath="$(SL_REFERENCES)\Unity.TextMeshPro.dll" />
+	<Reference Include="Mirror" HintPath="$(SL_REFERENCES)\Mirror.dll" />
+	<Reference Include="Assembly-CSharp" HintPath="$(SL_REFERENCES)\Assembly-CSharp-Publicized.dll" />
+	<Reference Include="Assembly-CSharp-firstpass" HintPath="$(SL_REFERENCES)\Assembly-CSharp-firstpass.dll" />
+	<Reference Include="CommandSystem.Core" HintPath="$(SL_REFERENCES)\CommandSystem.Core.dll" />
+	<Reference Include="YamlDotNet" HintPath="$(SL_REFERENCES)\YamlDotNet.dll" />
+	<Reference Include="NorthwoodLib" HintPath="$(SL_REFERENCES)\NorthwoodLib.dll" />
+	<Reference Include="LabApi" HintPath="$(SL_REFERENCES)\LabApi.dll" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" Version="2.3.6" />
+	<PackageReference Include="Lib.Harmony" Version="2.3.6" />
   </ItemGroup>
 
 </Project>
