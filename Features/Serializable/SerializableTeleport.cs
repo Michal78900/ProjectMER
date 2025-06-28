@@ -13,23 +13,59 @@ public class SerializableTeleport : SerializableObject, IIndicatorDefinition
 {
 	public List<string> Targets { get; set; } = [];
 
-	public float Cooldown { get; set; } = 5f;
+    public int Chance { get; set; } = 100;
 
-	public override GameObject? SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
+    public List<string> AllowedRoles { get; set; } = new List<string>()
+    {
+        "Scp0492",
+        "Scp049",
+        "Scp096",
+        "Scp106",
+        "Scp173",
+        "Scp939",
+        "Scp3114",
+        "ClassD",
+        "Scientist",
+        "FacilityGuard",
+        "NtfPrivate",
+        "NtfSergeant",
+        "NtfSpecialist",
+        "NtfCaptain",
+        "ChaosConscript",
+        "ChaosRifleman",
+        "ChaosRepressor",
+        "ChaosMarauder",
+        "Tutorial",
+    };
+
+    public float Cooldown { get; set; } = 5f;
+
+    public override GameObject? SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
 	{
 		GameObject gameObject = instance ?? new GameObject("Teleport");
 		Vector3 position = room.GetAbsolutePosition(Position);
 		Quaternion rotation = room.GetAbsoluteRotation(Rotation);
 		_prevIndex = Index;
 		gameObject.transform.SetLocalPositionAndRotation(position, rotation);
+        BoxCollider collider;
 
-		if (instance == null)
-		{
-			gameObject.AddComponent<BoxCollider>().isTrigger = true;
-			gameObject.AddComponent<TeleportObject>();
-		}
+        if (instance == null)
+        {
+            collider = gameObject.AddComponent<BoxCollider>();
+            collider.isTrigger = true;
+            gameObject.AddComponent<TeleportObject>();
+        }
+        else
+        {
+            collider = gameObject.GetComponent<BoxCollider>();
+        }
 
-		return gameObject;
+        if (collider != null)
+        {
+            collider.size = Scale;
+        }
+
+        return gameObject;
 	}
 
 	public GameObject SpawnOrUpdateIndicator(Room room, GameObject? instance = null)

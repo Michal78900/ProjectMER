@@ -166,8 +166,9 @@ public static class MapUtils
 	}
 
 	public static string[] GetAvailableSchematicNames() => Directory.GetFiles(ProjectMER.SchematicsDir, "*.json", SearchOption.AllDirectories).Select(Path.GetFileNameWithoutExtension).Where(x => !x.Contains('-')).ToArray();
+    public static string[] GetAvailableMapNames() => Directory.GetFiles(ProjectMER.MapsDir, "*.yml", SearchOption.AllDirectories).Select(Path.GetFileNameWithoutExtension).Where(x => !x.Contains('-')).ToArray();
 
-	public static string GetColoredMapName(string mapName)
+    public static string GetColoredMapName(string mapName)
 	{
 		if (mapName == UntitledMapName)
 			return $"<color=grey><b><i>{UntitledMapName}</i></b></color>";

@@ -82,11 +82,20 @@ public class ToolGunItem
 		ServerSpecificSettingsSync.SendOnJoinFilter = (_) => false; // Prevent all users from receiving the tools after joining the server.
 		ServerSpecificSettingsSync.DefinedSettings =
 		[
-			new SSGroupHeader("MapEditorReborn"),
-			new SSDropdownSetting(0, "Schematic Name", MapUtils.GetAvailableSchematicNames())
-		];
+            new SSGroupHeader("<scale=1.2>MapEditorReborn</scale>"),
 
-		ServerSpecificSettingsSync.SendToPlayersConditionally(x => x.inventory.UserInventory.Items.Values.Any(x => x.IsToolGun(out ToolGunItem _)));
+            new SSGroupHeader("Schematic Section"),
+            new SSDropdownSetting(0, "Schematic Name", MapUtils.GetAvailableSchematicNames()),
+            new SSTwoButtonsSetting(4, "Indicator Object", "Invisible", "Show", defaultIsB: false, hint: "Toggles visibility of Indicator Object."),
+
+            new SSGroupHeader("Map Section"),
+            new SSDropdownSetting(1, "Map Name", new[] { "None" }.Concat(MapUtils.GetAvailableMapNames()).ToArray()),
+            new SSButton(2, "Load Map", "Load"),
+            new SSButton(3, "Unload Map", "Unload"),
+        ];
+
+        ResetSettings(player);
+        ServerSpecificSettingsSync.SendToPlayersConditionally(x => x.inventory.UserInventory.Items.Values.Any(x => x.IsToolGun(out ToolGunItem _)));
 
 		return true;
 	}
@@ -99,14 +108,42 @@ public class ToolGunItem
 			{
 				ItemDictionary.Remove(itemBase.ItemSerial);
 				player.RemoveItem(itemBase);
-				return true;
+                ResetSettings(player);
+                return true;
 			}
 		}
 
 		return false;
 	}
 
-	public bool CreateMode => Firearm.IsEmittingLight && !AdsModule.AdsTarget;
+    public static void ResetSettings(Player player)
+    {
+        if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 1, out SSDropdownSetting dropdown))
+        {
+            dropdown.SyncSelectionIndexRaw = 0;
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { dropdown });
+        }
+
+        if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 2, out SSButton loadButton))
+        {
+            loadButton.SyncLastPress.Reset();
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { loadButton });
+        }
+
+        if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 3, out SSButton unloadButton))
+        {
+            unloadButton.SyncLastPress.Reset();
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { unloadButton });
+        }
+
+        if (ServerSpecificSettingsSync.TryGetSettingOfUser(player.ReferenceHub, 4, out SSTwoButtonsSetting indicatorsSetting))
+        {
+            indicatorsSetting.SyncIsB = false;
+            ServerSpecificSettingsSync.SendToPlayer(player.ReferenceHub, new[] { indicatorsSetting });
+        }
+    }
+
+    public bool CreateMode => Firearm.IsEmittingLight && !AdsModule.AdsTarget;
 	public bool DeleteMode => !Firearm.IsEmittingLight && !AdsModule.AdsTarget;
 	public bool SelectMode => Firearm.IsEmittingLight && AdsModule.AdsTarget;
 
