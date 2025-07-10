@@ -23,20 +23,20 @@ public static class ObjectSpawner
 		return gameObject.GetComponent<SchematicObject>();
 	}
 
-	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position) =>
-		SpawnSchematic(new() { SchematicName = schematicName, Position = position });
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, SchematicObjectDataList? data = null) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Data = data });
 
-	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Quaternion rotation) =>
-		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles });
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, SchematicObjectDataList? data = null) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles, Data = data });
 
-	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles) =>
-		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles });
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, SchematicObjectDataList? data = null) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Data = data });
 
-	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, Vector3 scale) =>
-		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles, Scale = scale });
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, Vector3 scale, SchematicObjectDataList? data = null) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles, Scale = scale, Data = data });
 
-	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, Vector3 scale) =>
-		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Scale = scale });
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, Vector3 scale, SchematicObjectDataList? data = null) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Scale = scale, Data = data });
 
 	public static bool TrySpawnSchematic(SerializableSchematic serializableSchematic, out SchematicObject schematic)
 	{
@@ -52,18 +52,18 @@ public static class ObjectSpawner
 		}
 	}
 
-	public static bool TrySpawnSchematic(string schematicName, Vector3 position, out SchematicObject schematic) =>
-		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position }, out schematic);
+	public static bool TrySpawnSchematic(string schematicName, Vector3 position, out SchematicObject schematic, SchematicObjectDataList? data = null) =>
+		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Data = data }, out schematic);
 
-	public static bool TrySpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, out SchematicObject schematic) =>
-		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles }, out schematic);
+	public static bool TrySpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, out SchematicObject schematic, SchematicObjectDataList? data = null) =>
+		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles, Data = data }, out schematic);
 
-	public static bool TrySpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, out SchematicObject schematic) =>
-		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles }, out schematic);
+	public static bool TrySpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, out SchematicObject schematic, SchematicObjectDataList? data = null) =>
+		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Data = data }, out schematic);
 
-	public static bool TrySpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, Vector3 scale, out SchematicObject schematic) =>
-		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles, Scale = scale }, out schematic);
+	public static bool TrySpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, Vector3 scale, out SchematicObject schematic, SchematicObjectDataList? data = null) =>
+		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles, Scale = scale, Data = data }, out schematic);
 
-	public static bool TrySpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, Vector3 scale, out SchematicObject schematic) =>
-		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Scale = scale }, out schematic);
+	public static bool TrySpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, Vector3 scale, out SchematicObject schematic, SchematicObjectDataList? data = null) =>
+		TrySpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Scale = scale, Data = data }, out schematic);
 }
