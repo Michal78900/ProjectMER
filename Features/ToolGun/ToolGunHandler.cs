@@ -8,7 +8,6 @@ using ProjectMER.Features.Objects;
 using ProjectMER.Features.Serializable;
 using ProjectMER.Features.Serializable.Schematics;
 using UnityEngine;
-using Console = System.Console;
 
 namespace ProjectMER.Features.ToolGun;
 
