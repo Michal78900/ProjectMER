@@ -35,7 +35,8 @@ public static class PrefabManager
 	public static ShootingTarget ShootingTargetSport { get; private set; }
 	public static ShootingTarget ShootingTargetDBoy { get; private set; }
 	public static ShootingTarget ShootingTargetBinary { get; private set; }
-
+	
+	public static Scp079Generator Generator { get; private set; }
 	public static Locker PedestalScp018 { get; private set; }
 	public static Locker PedstalScp207 { get; private set; }
 	public static Locker PedestalScp244 { get; private set; }
@@ -113,6 +114,12 @@ public static class PrefabManager
 			if (gameObject.TryGetComponent(out CapybaraToy capybaraToy))
 			{
 				Capybara = capybaraToy;
+				continue;
+			}
+			
+			if (gameObject.TryGetComponent(out Scp079Generator generator))
+			{
+				Generator = generator;
 				continue;
 			}
 
