@@ -32,6 +32,7 @@ public class SerializableDoor : SerializableObject
 		{
 			doorVariant = instance.GetComponent<DoorVariant>();
 		}
+  
 		doorVariant.transform.SetPositionAndRotation(position, rotation);
 		doorVariant.transform.localScale = Scale;
 
