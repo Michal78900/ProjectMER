@@ -1,5 +1,6 @@
 using AdminToys;
 using GameCore;
+using Interactables.Interobjects.DoorUtils;
 using InventorySystem.Items.Firearms.Attachments;
 using LabApi.Features.Wrappers;
 using ProjectMER.Events.Handlers.Internal;
@@ -41,6 +42,7 @@ public class SchematicBlockData
 			BlockType.Light => CreateLight(),
 			BlockType.Pickup => CreatePickup(schematicObject),
 			BlockType.Workstation => CreateWorkstation(),
+			BlockType.Door => CreateDoor(),
 			_ => CreateEmpty(true)
 		};
 
@@ -51,6 +53,12 @@ public class SchematicBlockData
 		transform.SetLocalPositionAndRotation(Position, Quaternion.Euler(Rotation));
 		transform.localScale = BlockType == BlockType.Empty && Scale == Vector3.zero ? Vector3.one : Scale;
 
+		// if you don't remove the parent before NetworkServer.Spawn then there won't be a door
+		if (BlockType == BlockType.Door)
+		{
+			transform.SetParent(null);
+		}
+		
 		return gameObject;
 	}
 
@@ -137,5 +145,25 @@ public class SchematicBlockData
 		workstation.NetworkStatus = (byte)(Properties.TryGetValue("IsInteractable", out object isInteractable) && Convert.ToBoolean(isInteractable) ? 0 : 4);
 
 		return workstation.gameObject;
+	}
+	
+	private GameObject CreateDoor()
+	{
+		DoorVariant prefab = (DoorType)Convert.ToInt32(Properties["DoorType"]) switch
+		{
+			DoorType.Hcz or DoorType.HeavyContainmentDoor => PrefabManager.DoorHcz,
+			DoorType.Bulkdoor or DoorType.HeavyBulkDoor => PrefabManager.DoorHeavyBulk,
+			DoorType.Lcz or DoorType.LightContainmentDoor => PrefabManager.DoorLcz,
+			DoorType.Ez or DoorType.EntranceDoor => PrefabManager.DoorEz,
+			_ => PrefabManager.DoorEz
+		};
+
+		DoorVariant doorVariant = GameObject.Instantiate(prefab);
+		doorVariant.NetworkTargetState = Convert.ToBoolean(Properties["IsOpen"]);
+		doorVariant.ServerChangeLock(DoorLockReason.SpecialDoorFeature, Convert.ToBoolean(Properties["IsLocked"]));
+		doorVariant.RequiredPermissions = new DoorPermissionsPolicy(
+			(DoorPermissionFlags)Convert.ToUInt16(Properties["RequiredPermissions"]),
+			Convert.ToBoolean(Properties["RequireAll"]));
+		return doorVariant.gameObject;
 	}
 }
