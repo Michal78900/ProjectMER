@@ -13,6 +13,8 @@ public class SerializableText : SerializableObject, IIndicatorDefinition
 {
 	public string Text { get; set; } = "Custom Text";
 
+	public Vector3 DisplaySize { get; set; } = TextToy.DefaultDisplaySize;
+
 	public override GameObject? SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
 	{
 		TextToy text = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.Text) : instance.GetComponent<TextToy>();
@@ -25,12 +27,14 @@ public class SerializableText : SerializableObject, IIndicatorDefinition
 		text.NetworkMovementSmoothing = 60;
 
 		text.Network_textFormat = Text;
+		text.Network_displaySize = DisplaySize;
 
 		if (instance == null)
 			NetworkServer.Spawn(text.gameObject);
 
 		return text.gameObject;
 	}
+	
 	public GameObject SpawnOrUpdateIndicator(Room room, GameObject? instance = null)
 	{
 		PrimitiveObjectToy cube;

@@ -26,6 +26,8 @@ public static class PrefabManager
 
 	public static TextToy Text { get; private set; }
 
+	public static InvisibleInteractableToy Interactable { get; private set; }
+
 	public static Scp079CameraToy CameraLcz { get; private set; }
 	public static Scp079CameraToy CameraHcz { get; private set; }
 	public static Scp079CameraToy CameraSz { get; private set; }
@@ -148,6 +150,12 @@ public static class PrefabManager
 			if (gameObject.TryGetComponent(out TextToy textToy))
 			{
 				Text = textToy;
+				continue;
+			}
+
+			if (gameObject.TryGetComponent(out InvisibleInteractableToy interactableToy))
+			{
+				Interactable = interactableToy;
 				continue;
 			}
 

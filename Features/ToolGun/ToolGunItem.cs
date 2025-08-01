@@ -33,6 +33,7 @@ public class ToolGunItem
 		{ ToolGunObjectType.Locker, typeof(SerializableLocker) },
 		{ ToolGunObjectType.Teleport, typeof(SerializableTeleport) },
 		{ToolGunObjectType.Generator, typeof(SerializeableGenerator)}
+		{ ToolGunObjectType.Interactable, typeof(SerializableInteractable) },
 	};
 
 	private ToolGunObjectType _selectedObjectToSpawn;
