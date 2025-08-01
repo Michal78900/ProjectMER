@@ -1,3 +1,4 @@
+using GameCore;
 using LabApi.Features.Wrappers;
 using MapGeneration;
 using ProjectMER.Configs;
@@ -79,7 +80,6 @@ public static class ToolGunHandler
 	public static void DeleteObject(MapEditorObject mapEditorObject)
 	{
 		IndicatorObject.TryDestroyIndicator(mapEditorObject);
-
 		MapSchematic map = MapUtils.LoadedMaps[mapEditorObject.MapName];
 		if (map.TryRemoveElement(mapEditorObject.Id))
 			map.DestroyObject(mapEditorObject.Id);

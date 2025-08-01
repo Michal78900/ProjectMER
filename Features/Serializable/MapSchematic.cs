@@ -1,4 +1,5 @@
 using LabApi.Features.Wrappers;
+using Mirror;
 using NorthwoodLib.Pools;
 using ProjectMER.Features.Extensions;
 using ProjectMER.Features.Objects;
@@ -23,6 +24,8 @@ public class MapSchematic
 	public bool IsDirty;
 
 	public Dictionary<string, SerializablePrimitive> Primitives { get; set; } = [];
+	
+	public Dictionary<string, SerializeableGenerator> Generators { get; set; } = [];
 
 	public Dictionary<string, SerializableLight> Lights { get; set; } = [];
 
@@ -54,6 +57,7 @@ public class MapSchematic
 
 	public MapSchematic Merge(MapSchematic other)
 	{
+		Generators.AddRange(other.Generators);
 		Primitives.AddRange(other.Primitives);
 		Lights.AddRange(other.Lights);
 		Doors.AddRange(other.Doors);
@@ -93,6 +97,7 @@ public class MapSchematic
 			SpawnObject(kVP.Key, kVP.Value);
 		});
 		Workstations.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Generators.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		ItemSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
@@ -137,6 +142,7 @@ public class MapSchematic
 
 			SpawnedObjects.Remove(mapEditorObject);
 			mapEditorObject.Destroy();
+			NetworkServer.Destroy(mapEditorObject.gameObject);
 		}
 	}
 
@@ -185,6 +191,9 @@ public class MapSchematic
 			return true;
 
 		if (Lockers.TryAdd(id, serializableObject))
+			return true;
+		
+		if (Generators.TryAdd(id, serializableObject))
 			return true;
 
 		IsDirty = dirtyPrevValue;
@@ -237,7 +246,10 @@ public class MapSchematic
 
 		if (Lockers.Remove(id))
 			return true;
-
+    
+		if (Generators.Remove(id))
+			return true;
+		
 		IsDirty = dirtyPrevValue;
 		return false;
 	}
