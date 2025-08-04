@@ -44,9 +44,7 @@ public enum BlockType
 	/// Represents a locker.
 	/// </summary>
 	Locker = 7,
-	
-	/// <summary>
-	/// Represents a door.
-	/// </summary>
-	Door = 8,
+	Text = 8,
+	Interactable = 9,
+	Door = 10,
 }

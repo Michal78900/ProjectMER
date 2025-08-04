@@ -19,12 +19,15 @@ public static class PrefabManager
 	public static DoorVariant DoorHcz { get; private set; }
 	public static DoorVariant DoorEz { get; private set; }
 	public static DoorVariant DoorHeavyBulk { get; private set; }
+	public static DoorVariant DoorGate { get; private set; }
 
 	public static WorkstationController Workstation { get; private set; }
 
 	public static CapybaraToy Capybara { get; private set; }
 
 	public static TextToy Text { get; private set; }
+
+	public static InvisibleInteractableToy Interactable { get; private set; }
 
 	public static Scp079CameraToy CameraLcz { get; private set; }
 	public static Scp079CameraToy CameraHcz { get; private set; }
@@ -52,6 +55,9 @@ public static class PrefabManager
 	public static Locker PedestalAntiScp207 { get; private set; }
 	public static Locker PedestalScp1344 { get; private set; }
 	public static Locker LockerExperimentalWeapon { get; private set; }
+
+	public static WaypointToy Waypoint { get; private set; }
+	public static SpawnableCullingParent CullingParent { get; private set; }
 
 	public static void RegisterPrefabs()
 	{
@@ -84,6 +90,9 @@ public static class PrefabManager
 						continue;
 					case "HCZ BulkDoor":
 						DoorHeavyBulk = doorVariant;
+						continue;
+					case "Spawnable Unsecured Pryable GateDoor":
+						DoorGate = doorVariant;
 						continue;
 				}
 			}
@@ -144,6 +153,12 @@ public static class PrefabManager
 				continue;
 			}
 
+			if (gameObject.TryGetComponent(out InvisibleInteractableToy interactableToy))
+			{
+				Interactable = interactableToy;
+				continue;
+			}
+
 			if (gameObject.TryGetComponent(out Locker locker))
 			{
 				switch (gameObject.name)
@@ -198,6 +213,19 @@ public static class PrefabManager
 						continue;
 				}
 			}
+
+			if (gameObject.TryGetComponent(out WaypointToy waypointToy))
+			{
+				Waypoint = waypointToy;
+				continue;
+			}
+			
+			if (gameObject.TryGetComponent(out SpawnableCullingParent spawnableCullingParent))
+			{
+				CullingParent = spawnableCullingParent;
+				continue;
+			}
+
 		}
 	}
 }

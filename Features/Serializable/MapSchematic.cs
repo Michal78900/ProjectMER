@@ -38,6 +38,8 @@ public class MapSchematic
 
 	public Dictionary<string, SerializableText> Texts { get; set; } = [];
 
+	public Dictionary<string, SerializableInteractable> Interactables { get; set; } = [];
+
 	public Dictionary<string, SerializableScp079Camera> Scp079Cameras { get; set; } = [];
 
 	public Dictionary<string, SerializableShootingTarget> ShootingTargets { get; set; } = [];
@@ -60,6 +62,7 @@ public class MapSchematic
 		PlayerSpawnpoints.AddRange(other.PlayerSpawnpoints);
 		Capybaras.AddRange(other.Capybaras);
 		Texts.AddRange(other.Texts);
+		Interactables.AddRange(other.Interactables);
 		Schematics.AddRange(other.Schematics);
 		Scp079Cameras.AddRange(other.Scp079Cameras);
 		ShootingTargets.AddRange(other.ShootingTargets);
@@ -94,6 +97,7 @@ public class MapSchematic
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Texts.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Interactables.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Schematics.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Scp079Cameras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		ShootingTargets.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
@@ -140,7 +144,7 @@ public class MapSchematic
 	{
 		bool dirtyPrevValue = IsDirty;
 		IsDirty = true;
-		
+
 		if (Primitives.TryAdd(id, serializableObject))
 			return true;
 
@@ -163,6 +167,9 @@ public class MapSchematic
 			return true;
 
 		if (Texts.TryAdd(id, serializableObject))
+			return true;
+
+		if (Interactables.TryAdd(id, serializableObject))
 			return true;
 
 		if (Schematics.TryAdd(id, serializableObject))
@@ -188,7 +195,7 @@ public class MapSchematic
 	{
 		bool dirtyPrevValue = IsDirty;
 		IsDirty = true;
-		
+
 		if (Primitives.Remove(id))
 			return true;
 
@@ -213,6 +220,9 @@ public class MapSchematic
 		if (Texts.Remove(id))
 			return true;
 
+		if (Interactables.Remove(id))
+			return true;
+
 		if (Schematics.Remove(id))
 			return true;
 
@@ -227,7 +237,7 @@ public class MapSchematic
 
 		if (Lockers.Remove(id))
 			return true;
-		
+
 		IsDirty = dirtyPrevValue;
 		return false;
 	}

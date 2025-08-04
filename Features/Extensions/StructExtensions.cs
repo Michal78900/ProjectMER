@@ -50,6 +50,14 @@ public static class StructExtensions
 		return new Vector3(x, y, z);
 	}
 
+	public static Vector2 ToVector2(this object jObject)
+	{
+		if (jObject is not IDictionary<string, object> dict)
+			return Vector2.zero;
+
+		return new Vector2(Convert.ToSingle(dict["x"]), Convert.ToSingle(dict["y"]));
+	}
+
 	public static bool TryParseToFloat(this string s, out float result) => float.TryParse(s.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out result);
 
 	public static bool TryGetVector(string x, string y, string z, out Vector3 vector)

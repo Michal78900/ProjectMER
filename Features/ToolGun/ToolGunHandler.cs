@@ -21,7 +21,7 @@ public static class ToolGunHandler
 
 		CreateObject(hit.point, objectType, schematicName);
 		if (Config.AutoSelect)
-			SelectObject(player, MapUtils.UntitledMap.SpawnedObjects.Last());
+			SelectObject(player, MapUtils.UntitledMap.SpawnedObjects.LastOrDefault());
 	}
 
 	public static void CreateObject(Vector3 position, ToolGunObjectType objectType, string schematicName = "")

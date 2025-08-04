@@ -18,7 +18,7 @@ public class SerializableCapybara : SerializableObject
 		capybara.transform.SetPositionAndRotation(position, rotation);
 		capybara.transform.localScale = Scale;
 
-		capybara.Network_collisionsEnabled = true;
+		capybara.NetworkCollisionsEnabled = true;
 
 		if (instance == null)
 			NetworkServer.Spawn(capybara.gameObject);
