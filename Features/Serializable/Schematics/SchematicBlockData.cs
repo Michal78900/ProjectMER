@@ -168,6 +168,7 @@ public class SchematicBlockData
 			DoorType.Bulkdoor or DoorType.HeavyBulkDoor => PrefabManager.DoorHeavyBulk,
 			DoorType.Lcz or DoorType.LightContainmentDoor => PrefabManager.DoorLcz,
 			DoorType.Ez or DoorType.EntranceDoor => PrefabManager.DoorEz,
+			DoorType.Gate => PrefabManager.DoorGate,
 			_ => PrefabManager.DoorEz
 		};
 
@@ -178,6 +179,7 @@ public class SchematicBlockData
 			(DoorPermissionFlags)Convert.ToUInt16(Properties["RequiredPermissions"]),
 			Convert.ToBoolean(Properties["RequireAll"]));
 		return doorVariant.gameObject;
+	}
 
 	private GameObject CreateText()
 	{
