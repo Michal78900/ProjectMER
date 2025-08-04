@@ -46,5 +46,6 @@ public enum BlockType
 	Locker = 7,
 	Text = 8,
 	Interactable = 9,
-	Door = 10,
+	Waypoint = 10,
+	Door = 11,
 }

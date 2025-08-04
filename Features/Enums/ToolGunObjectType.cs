@@ -16,4 +16,5 @@ public enum ToolGunObjectType
 	Locker = 11,
 	Teleport = 12,
 	Interactable = 13,
+	Waypoint = 14,
 }

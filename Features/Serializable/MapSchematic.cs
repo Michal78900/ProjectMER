@@ -50,6 +50,8 @@ public class MapSchematic
 
 	public Dictionary<string, SerializableLocker> Lockers { get; set; } = [];
 
+	public Dictionary<string, SerializableWaypoint> Waypoints { get; set; } = [];
+
 	public List<MapEditorObject> SpawnedObjects = [];
 
 	public MapSchematic Merge(MapSchematic other)
@@ -68,6 +70,7 @@ public class MapSchematic
 		ShootingTargets.AddRange(other.ShootingTargets);
 		Teleports.AddRange(other.Teleports);
 		Lockers.AddRange(other.Lockers);
+		Waypoints.AddRange(other.Waypoints);
 
 		return this;
 	}
@@ -107,6 +110,7 @@ public class MapSchematic
 			kVP.Value._prevType = kVP.Value.LockerType;
 			SpawnObject(kVP.Key, kVP.Value);
 		});
+		Waypoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 	}
 
 	public void SpawnObject<T>(string id, T serializableObject) where T : SerializableObject
@@ -187,6 +191,9 @@ public class MapSchematic
 		if (Lockers.TryAdd(id, serializableObject))
 			return true;
 
+		if (Waypoints.TryAdd(id, serializableObject))
+			return true;
+
 		IsDirty = dirtyPrevValue;
 		return false;
 	}
@@ -236,6 +243,9 @@ public class MapSchematic
 			return true;
 
 		if (Lockers.Remove(id))
+			return true;
+
+		if (Waypoints.Remove(id))
 			return true;
 
 		IsDirty = dirtyPrevValue;
