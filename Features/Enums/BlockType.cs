@@ -47,5 +47,5 @@ public enum BlockType
 	Text = 8,
 	Interactable = 9,
 	Waypoint = 10,
-	Door = 11,
+	Door = 30, // when merging replace with normal serial number
 }
