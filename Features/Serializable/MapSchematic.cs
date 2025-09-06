@@ -38,6 +38,8 @@ public class MapSchematic
 
 	public Dictionary<string, SerializableText> Texts { get; set; } = [];
 
+	public Dictionary<string, SerializableInteractable> Interactables { get; set; } = [];
+
 	public Dictionary<string, SerializableScp079Camera> Scp079Cameras { get; set; } = [];
 
 	public Dictionary<string, SerializableShootingTarget> ShootingTargets { get; set; } = [];
@@ -47,6 +49,8 @@ public class MapSchematic
 	public Dictionary<string, SerializableTeleport> Teleports { get; set; } = [];
 
 	public Dictionary<string, SerializableLocker> Lockers { get; set; } = [];
+
+	public Dictionary<string, SerializableWaypoint> Waypoints { get; set; } = [];
 
 	public List<MapEditorObject> SpawnedObjects = [];
 
@@ -60,11 +64,13 @@ public class MapSchematic
 		PlayerSpawnpoints.AddRange(other.PlayerSpawnpoints);
 		Capybaras.AddRange(other.Capybaras);
 		Texts.AddRange(other.Texts);
+		Interactables.AddRange(other.Interactables);
 		Schematics.AddRange(other.Schematics);
 		Scp079Cameras.AddRange(other.Scp079Cameras);
 		ShootingTargets.AddRange(other.ShootingTargets);
 		Teleports.AddRange(other.Teleports);
 		Lockers.AddRange(other.Lockers);
+		Waypoints.AddRange(other.Waypoints);
 
 		return this;
 	}
@@ -94,6 +100,7 @@ public class MapSchematic
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Texts.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Interactables.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Schematics.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Scp079Cameras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		ShootingTargets.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
@@ -103,6 +110,7 @@ public class MapSchematic
 			kVP.Value._prevType = kVP.Value.LockerType;
 			SpawnObject(kVP.Key, kVP.Value);
 		});
+		Waypoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 	}
 
 	public void SpawnObject<T>(string id, T serializableObject) where T : SerializableObject
@@ -140,7 +148,7 @@ public class MapSchematic
 	{
 		bool dirtyPrevValue = IsDirty;
 		IsDirty = true;
-		
+
 		if (Primitives.TryAdd(id, serializableObject))
 			return true;
 
@@ -165,6 +173,9 @@ public class MapSchematic
 		if (Texts.TryAdd(id, serializableObject))
 			return true;
 
+		if (Interactables.TryAdd(id, serializableObject))
+			return true;
+
 		if (Schematics.TryAdd(id, serializableObject))
 			return true;
 
@@ -180,6 +191,9 @@ public class MapSchematic
 		if (Lockers.TryAdd(id, serializableObject))
 			return true;
 
+		if (Waypoints.TryAdd(id, serializableObject))
+			return true;
+
 		IsDirty = dirtyPrevValue;
 		return false;
 	}
@@ -188,7 +202,7 @@ public class MapSchematic
 	{
 		bool dirtyPrevValue = IsDirty;
 		IsDirty = true;
-		
+
 		if (Primitives.Remove(id))
 			return true;
 
@@ -213,6 +227,9 @@ public class MapSchematic
 		if (Texts.Remove(id))
 			return true;
 
+		if (Interactables.Remove(id))
+			return true;
+
 		if (Schematics.Remove(id))
 			return true;
 
@@ -227,7 +244,10 @@ public class MapSchematic
 
 		if (Lockers.Remove(id))
 			return true;
-		
+
+		if (Waypoints.Remove(id))
+			return true;
+
 		IsDirty = dirtyPrevValue;
 		return false;
 	}

@@ -1,4 +1,4 @@
-using System.IO.Enumeration;
+using System.Text.RegularExpressions;
 using LabApi.Events.Arguments.WarheadEvents;
 using LabApi.Events.CustomHandlers;
 using LabApi.Features.Wrappers;
@@ -66,7 +66,7 @@ public class ActionOnEventHandlers : CustomEventsHandler
 
 	private void HandleMapLoading(string argument, List<string> allMaps)
 	{
-		string[] orSplit = argument.Split("||");
+		string[] orSplit = argument.Split('|', '|');
 		string[] andSplit = argument.Split(',');
 
 		if (orSplit.Length > 1 || andSplit.Length > 1)
@@ -81,14 +81,14 @@ public class ActionOnEventHandlers : CustomEventsHandler
 
 		foreach (string mapName in allMaps)
 		{
-			if (FileSystemName.MatchesSimpleExpression(argument, mapName))
+			if (Regex.IsMatch(mapName, WildCardToRegular(argument)))
 				MapUtils.LoadMap(mapName);
 		}
 	}
 
 	private void HandleMapUnloading(string argument, List<string> allMaps)
 	{
-		string[] orSplit = argument.Split("||");
+		string[] orSplit = argument.Split('|', '|');
 		string[] andSplit = argument.Split(',');
 
 		if (orSplit.Length > 1 || andSplit.Length > 1)
@@ -103,8 +103,10 @@ public class ActionOnEventHandlers : CustomEventsHandler
 
 		foreach (string mapName in allMaps)
 		{
-			if (FileSystemName.MatchesSimpleExpression(argument, mapName))
+			if (Regex.IsMatch(mapName, WildCardToRegular(argument)))
 				MapUtils.UnloadMap(mapName);
 		}
 	}
+
+	private static string WildCardToRegular(string value) => "^" + Regex.Escape(value).Replace("\\?", ".").Replace("\\*", ".*") + "$";
 }

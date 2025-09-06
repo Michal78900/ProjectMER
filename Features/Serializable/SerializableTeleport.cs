@@ -24,10 +24,13 @@ public class SerializableTeleport : SerializableObject, IIndicatorDefinition
 		gameObject.transform.SetLocalPositionAndRotation(position, rotation);
 
 		if (instance == null)
-		{
-			gameObject.AddComponent<BoxCollider>().isTrigger = true;
 			gameObject.AddComponent<TeleportObject>();
-		}
+
+		if (!gameObject.TryGetComponent(out BoxCollider boxCollider))
+			boxCollider = gameObject.AddComponent<BoxCollider>();
+
+		boxCollider.isTrigger = true;
+		boxCollider.size = Scale;
 
 		return gameObject;
 	}
