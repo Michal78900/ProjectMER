@@ -9,8 +9,6 @@ namespace ProjectMER.Features.Extensions
 {
     public static class ExiledExtensions
     {
-        private static Assembly? ExiledLoaderAssembly;
-
         private static MethodInfo? CustomItemTrySpawnMethodInfo;
 
         private static MethodInfo? PickupGetBaseMethodInfo;
@@ -76,9 +74,9 @@ namespace ProjectMER.Features.Extensions
                 return;
             }
 
-            ExiledLoaderAssembly = kvp.Value;
+            Assembly? exiledLoaderAssembly = kvp.Value;
 
-            object? plugin = ExiledLoaderAssembly.GetType("Exiled.Loader.Loader")?.GetMethod("GetPlugin")?.Invoke(null, ["exiled_custom_items"]);
+            object? plugin = exiledLoaderAssembly.GetType("Exiled.Loader.Loader")?.GetMethod("GetPlugin")?.Invoke(null, ["exiled_custom_items"]);
 
             if (plugin is null)
             {
