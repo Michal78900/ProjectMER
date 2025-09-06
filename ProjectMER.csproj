@@ -22,7 +22,6 @@
     <Reference Include="YamlDotNet" HintPath="$(SL_REFERENCES)\YamlDotNet.dll" />
     <Reference Include="NorthwoodLib" HintPath="$(SL_REFERENCES)\NorthwoodLib.dll" />
     <Reference Include="LabApi" HintPath="$(SL_REFERENCES)\LabApi.dll" />
-    <Reference Include="mscorlib" HintPath="$(SL_REFERENCES)\mscorlib.dll" />
   </ItemGroup>
 
   <ItemGroup>
