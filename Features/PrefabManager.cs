@@ -1,9 +1,13 @@
 using AdminToys;
+using Interactables.Interobjects;
 using Interactables.Interobjects.DoorUtils;
 using InventorySystem.Items.Firearms.Attachments;
 using MapGeneration.Distributors;
 using MapGeneration.RoomConnectors;
+using MapGeneration.RoomConnectors.Spawners;
 using Mirror;
+using ProgressiveCulling;
+using RoomDecorations.CableTray;
 using UnityEngine;
 using LightSourceToy = AdminToys.LightSourceToy;
 using PrimitiveObjectToy = AdminToys.PrimitiveObjectToy;
@@ -57,6 +61,9 @@ public static class PrefabManager
     public static Locker PedestalScp1344 { get; private set; }
     public static Locker LockerExperimentalWeapon { get; private set; }
 
+    public static WaypointToy Waypoint { get; private set; }
+    public static SpawnableCullingParent CullingParent { get; private set; }
+
     public static SpawnableRoomConnector OpenHallway { get; private set; }
     public static SpawnableRoomConnector BrokenElectricalBoxOpenConnector { get; private set; }
     public static SpawnableRoomConnector SimpleBoxesOpenConnector { get; private set; }
@@ -66,9 +73,6 @@ public static class PrefabManager
     public static SpawnableRoomConnector AngledFencesOpenConnector { get; private set; }
     public static SpawnableRoomConnector HugeOrangePipesOpenConnector { get; private set; }
     public static SpawnableRoomConnector PipesLongOpenConnector { get; private set; }
-
-    public static WaypointToy Waypoint { get; private set; }
-    public static SpawnableCullingParent CullingParent { get; private set; }
 
     public static void RegisterPrefabs()
     {
@@ -225,6 +229,18 @@ public static class PrefabManager
                 }
             }
 
+            if (gameObject.TryGetComponent(out WaypointToy waypointToy))
+            {
+                Waypoint = waypointToy;
+                continue;
+            }
+
+            if (gameObject.TryGetComponent(out SpawnableCullingParent spawnableCullingParent))
+            {
+                CullingParent = spawnableCullingParent;
+                continue;
+            }
+
             if (gameObject.TryGetComponent(out SpawnableRoomConnector spawnableClutter))
             {
                 Logger.Info($"Found {gameObject.name}");
@@ -262,18 +278,6 @@ public static class PrefabManager
                         Logger.Warn($"Unknown clutter connector {gameObject.name}");
                         continue;
                 }
-            }
-
-            if (gameObject.TryGetComponent(out WaypointToy waypointToy))
-            {
-                Waypoint = waypointToy;
-                continue;
-            }
-
-            if (gameObject.TryGetComponent(out SpawnableCullingParent spawnableCullingParent))
-            {
-                CullingParent = spawnableCullingParent;
-                continue;
             }
         }
     }
