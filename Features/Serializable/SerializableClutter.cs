@@ -1,8 +1,10 @@
-﻿using LabApi.Features.Wrappers;
+﻿using Interactables.Interobjects.DoorUtils;
+using LabApi.Features.Wrappers;
 using MapGeneration.RoomConnectors;
 using MapGeneration.RoomConnectors.Spawners;
 using Mirror;
 using ProjectMER.Commands.Modifying.Scale;
+using ProjectMER.Features.Enums;
 using ProjectMER.Features.Extensions;
 using UnityEngine;
 
@@ -14,16 +16,27 @@ public class SerializableClutter : SerializableObject
 
     public override GameObject SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
     {
-        SpawnableRoomConnector connectorSpawnpoint = instance == null ? UnityEngine.Object.Instantiate(ClutterPrefab) : instance.GetComponent<SpawnableRoomConnector>();
+        SpawnableRoomConnector connectorSpawnpoint;
         Vector3 position = room.GetAbsolutePosition(Position);
         Quaternion rotation = room.GetAbsoluteRotation(Rotation);
         _prevIndex = Index;
 
+        if (instance == null)
+        {
+            connectorSpawnpoint = GameObject.Instantiate(ClutterPrefab);
+        }
+        else
+        {
+            connectorSpawnpoint = instance.GetComponent<SpawnableRoomConnector>();
+        }
+
         connectorSpawnpoint.transform.SetPositionAndRotation(position, rotation);
         connectorSpawnpoint.transform.localScale = Scale;
 
-        if (instance == null)
-            NetworkServer.Spawn(connectorSpawnpoint.gameObject);
+        _prevType = ConnectorType;
+
+        NetworkServer.UnSpawn(connectorSpawnpoint.gameObject);
+        NetworkServer.Spawn(connectorSpawnpoint.gameObject);
 
         return connectorSpawnpoint.gameObject;
     }
@@ -49,4 +62,7 @@ public class SerializableClutter : SerializableObject
             return prefab;
         }
     }
+
+    public override bool RequiresReloading => ConnectorType != _prevType || base.RequiresReloading;
+    internal SpawnableRoomConnectorType _prevType;
 }
