@@ -1,6 +1,7 @@
 using AdminToys;
 using InventorySystem.Items.Firearms.Attachments;
 using LabApi.Features.Wrappers;
+using MapGeneration.RoomConnectors;
 using ProjectMER.Events.Handlers.Internal;
 using ProjectMER.Features.Enums;
 using ProjectMER.Features.Extensions;
@@ -15,174 +16,205 @@ namespace ProjectMER.Features.Serializable.Schematics;
 
 public class SchematicBlockData
 {
-	public virtual string Name { get; set; }
+    public virtual string Name { get; set; }
 
-	public virtual int ObjectId { get; set; }
+    public virtual int ObjectId { get; set; }
 
-	public virtual int ParentId { get; set; }
+    public virtual int ParentId { get; set; }
 
-	public virtual string AnimatorName { get; set; }
+    public virtual string AnimatorName { get; set; }
 
-	public virtual Vector3 Position { get; set; }
+    public virtual Vector3 Position { get; set; }
 
-	public virtual Vector3 Rotation { get; set; }
+    public virtual Vector3 Rotation { get; set; }
 
-	public virtual Vector3 Scale { get; set; }
+    public virtual Vector3 Scale { get; set; }
 
-	public virtual BlockType BlockType { get; set; }
+    public virtual BlockType BlockType { get; set; }
 
-	public virtual Dictionary<string, object> Properties { get; set; }
+    public virtual Dictionary<string, object> Properties { get; set; }
 
-	public GameObject Create(SchematicObject schematicObject, Transform parentTransform)
-	{
-		GameObject gameObject = BlockType switch
-		{
-			BlockType.Empty => CreateEmpty(),
-			BlockType.Primitive => CreatePrimitive(),
-			BlockType.Light => CreateLight(),
-			BlockType.Pickup => CreatePickup(schematicObject),
-			BlockType.Workstation => CreateWorkstation(),
-			BlockType.Text => CreateText(),
-			BlockType.Interactable => CreateInteractable(),
-			BlockType.Waypoint => CreateWaypoint(),
-			_ => CreateEmpty(true)
-		};
+    public GameObject Create(SchematicObject schematicObject, Transform parentTransform)
+    {
+        GameObject gameObject = BlockType switch
+        {
+            BlockType.Empty => CreateEmpty(),
+            BlockType.Primitive => CreatePrimitive(),
+            BlockType.Light => CreateLight(),
+            BlockType.Pickup => CreatePickup(schematicObject),
+            BlockType.Workstation => CreateWorkstation(),
+            BlockType.Text => CreateText(),
+            BlockType.Interactable => CreateInteractable(),
+            BlockType.Waypoint => CreateWaypoint(),
+            BlockType.Clutter => CreateClutter(),
+            _ => CreateEmpty(true)
+        };
 
-		gameObject.name = Name;
+        gameObject.name = Name;
 
-		Transform transform = gameObject.transform;
-		transform.SetParent(parentTransform);
-		transform.SetLocalPositionAndRotation(Position, Quaternion.Euler(Rotation));
+        Transform transform = gameObject.transform;
+        if (BlockType is not BlockType.Clutter)
+        {
+            transform.SetParent(parentTransform);
+            transform.SetLocalPositionAndRotation(Position, Quaternion.Euler(Rotation));
+        }
+        else
+        {
+            Vector3 localToWorldPosition = parentTransform.TransformPoint(Position);
+            Quaternion localToWorldRotation = parentTransform.rotation * Quaternion.Euler(Rotation);
 
-		transform.localScale = BlockType switch
-		{
-			BlockType.Empty when Scale == Vector3.zero => Vector3.one,
-			BlockType.Waypoint => Scale * SerializableWaypoint.ScaleMultiplier,
-			_ => Scale,
-		};
+            transform.SetPositionAndRotation(localToWorldPosition, localToWorldRotation);
+        }
+        transform.localScale = BlockType switch
+        {
+            BlockType.Empty when Scale == Vector3.zero => Vector3.one,
+            BlockType.Waypoint => Scale * SerializableWaypoint.ScaleMultiplier,
+            _ => Scale,
+        };
 
-		if (gameObject.TryGetComponent(out AdminToyBase adminToyBase))
-		{
-			if (Properties != null && Properties.TryGetValue("Static", out object isStatic) && Convert.ToBoolean(isStatic))
-			{
-				adminToyBase.NetworkIsStatic = true;
-			}
-			else
-			{
-				adminToyBase.NetworkMovementSmoothing = 60;
-			}
-		}
+        if (gameObject.TryGetComponent(out AdminToyBase adminToyBase))
+        {
+            if (Properties != null && Properties.TryGetValue("Static", out object isStatic) && Convert.ToBoolean(isStatic))
+            {
+                adminToyBase.NetworkIsStatic = true;
+            }
+            else
+            {
+                adminToyBase.NetworkMovementSmoothing = 60;
+            }
+        }
 
-		return gameObject;
-	}
+        return gameObject;
+    }
 
-	private GameObject CreateEmpty(bool fallback = false)
-	{
-		if (fallback)
-			Logger.Warn($"{BlockType} is not yet implemented. Object will be an empty GameObject instead.");
+    private GameObject CreateEmpty(bool fallback = false)
+    {
+        if (fallback)
+            Logger.Warn($"{BlockType} is not yet implemented. Object will be an empty GameObject instead.");
 
-		PrimitiveObjectToy primitive = GameObject.Instantiate(PrefabManager.PrimitiveObject);
-		primitive.NetworkPrimitiveFlags = PrimitiveFlags.None;
+        PrimitiveObjectToy primitive = GameObject.Instantiate(PrefabManager.PrimitiveObject);
+        primitive.NetworkPrimitiveFlags = PrimitiveFlags.None;
 
-		return primitive.gameObject;
-	}
+        return primitive.gameObject;
+    }
 
-	private GameObject CreatePrimitive()
-	{
-		PrimitiveObjectToy primitive = GameObject.Instantiate(PrefabManager.PrimitiveObject);
+    private GameObject CreateClutter()
+    {
+        SpawnableRoomConnectorType connectorType = (SpawnableRoomConnectorType)Convert.ToInt32(Properties["ConnectorType"]);
 
-		primitive.NetworkPrimitiveType = (PrimitiveType)Convert.ToInt32(Properties["PrimitiveType"]);
-		primitive.NetworkMaterialColor = Properties["Color"].ToString().GetColorFromString();
+        SpawnableRoomConnector connector = UnityEngine.Object.Instantiate(connectorType switch
+        {
+            SpawnableRoomConnectorType.OpenHallway => PrefabManager.OpenHallway,
+            SpawnableRoomConnectorType.ClutterBrokenElectricalBox => PrefabManager.BrokenElectricalBoxOpenConnector,
+            SpawnableRoomConnectorType.ClutterSimpleBoxes => PrefabManager.SimpleBoxesOpenConnector,
+            SpawnableRoomConnectorType.ClutterPipesShort => PrefabManager.PipesShortOpenConnector,
+            SpawnableRoomConnectorType.ClutterBoxesLadder => PrefabManager.BoxesLadderOpenConnector,
+            SpawnableRoomConnectorType.ClutterTankSupportedShelf => PrefabManager.TankSupportedShelfOpenConnector,
+            SpawnableRoomConnectorType.ClutterAngledFences => PrefabManager.AngledFencesOpenConnector,
+            SpawnableRoomConnectorType.ClutterHugeOrangePipes => PrefabManager.HugeOrangePipesOpenConnector,
+            SpawnableRoomConnectorType.ClutterPipesLong => PrefabManager.PipesLongOpenConnector,
+            _ => throw new InvalidOperationException($"No prefab defined for connector type {connectorType}")
+        });
 
-		PrimitiveFlags primitiveFlags;
-		if (Properties.TryGetValue("PrimitiveFlags", out object flags))
-		{
-			primitiveFlags = (PrimitiveFlags)Convert.ToByte(flags);
-		}
-		else
-		{
-			// Backward compatibility
-			primitiveFlags = PrimitiveFlags.Visible;
-			if (Scale.x >= 0f)
-				primitiveFlags |= PrimitiveFlags.Collidable;
-		}
+        return connector.gameObject;
+    }
 
-		primitive.NetworkPrimitiveFlags = primitiveFlags;
+    private GameObject CreatePrimitive()
+    {
+        PrimitiveObjectToy primitive = GameObject.Instantiate(PrefabManager.PrimitiveObject);
 
-		return primitive.gameObject;
-	}
+        primitive.NetworkPrimitiveType = (PrimitiveType)Convert.ToInt32(Properties["PrimitiveType"]);
+        primitive.NetworkMaterialColor = Properties["Color"].ToString().GetColorFromString();
 
-	private GameObject CreateLight()
-	{
-		LightSourceToy light = GameObject.Instantiate(PrefabManager.LightSource);
+        PrimitiveFlags primitiveFlags;
+        if (Properties.TryGetValue("PrimitiveFlags", out object flags))
+        {
+            primitiveFlags = (PrimitiveFlags)Convert.ToByte(flags);
+        }
+        else
+        {
+            // Backward compatibility
+            primitiveFlags = PrimitiveFlags.Visible;
+            if (Scale.x >= 0f)
+                primitiveFlags |= PrimitiveFlags.Collidable;
+        }
 
-		light.NetworkLightType = Properties.TryGetValue("LightType", out object lightType) ? (LightType)Convert.ToInt32(lightType) : LightType.Point;
-		light.NetworkLightColor = Properties["Color"].ToString().GetColorFromString();
-		light.NetworkLightIntensity = Convert.ToSingle(Properties["Intensity"]);
-		light.NetworkLightRange = Convert.ToSingle(Properties["Range"]);
+        primitive.NetworkPrimitiveFlags = primitiveFlags;
 
-		if (Properties.TryGetValue("Shadows", out object shadows))
-		{
-			// Backward compatibility
-			light.NetworkShadowType = Convert.ToBoolean(shadows) ? LightShadows.Soft : LightShadows.None;
-		}
-		else
-		{
-			light.NetworkShadowType = (LightShadows)Convert.ToInt32(Properties["ShadowType"]);
-			light.NetworkLightShape = (LightShape)Convert.ToInt32(Properties["Shape"]);
-			light.NetworkSpotAngle = Convert.ToSingle(Properties["SpotAngle"]);
-			light.NetworkInnerSpotAngle = Convert.ToSingle(Properties["InnerSpotAngle"]);
-			light.NetworkShadowStrength = Convert.ToSingle(Properties["ShadowStrength"]);
-		}
+        return primitive.gameObject;
+    }
 
-		return light.gameObject;
-	}
+    private GameObject CreateLight()
+    {
+        LightSourceToy light = GameObject.Instantiate(PrefabManager.LightSource);
 
-	private GameObject CreatePickup(SchematicObject schematicObject)
-	{
-		if (Properties.TryGetValue("Chance", out object property) && UnityEngine.Random.Range(0, 101) > Convert.ToSingle(property))
-			return new("Empty Pickup");
+        light.NetworkLightType = Properties.TryGetValue("LightType", out object lightType) ? (LightType)Convert.ToInt32(lightType) : LightType.Point;
+        light.NetworkLightColor = Properties["Color"].ToString().GetColorFromString();
+        light.NetworkLightIntensity = Convert.ToSingle(Properties["Intensity"]);
+        light.NetworkLightRange = Convert.ToSingle(Properties["Range"]);
 
-		Pickup pickup = Pickup.Create((ItemType)Convert.ToInt32(Properties["ItemType"]), Vector3.zero)!;
-		if (Properties.ContainsKey("Locked"))
-			PickupEventsHandler.ButtonPickups.Add(pickup.Serial, schematicObject);
+        if (Properties.TryGetValue("Shadows", out object shadows))
+        {
+            // Backward compatibility
+            light.NetworkShadowType = Convert.ToBoolean(shadows) ? LightShadows.Soft : LightShadows.None;
+        }
+        else
+        {
+            light.NetworkShadowType = (LightShadows)Convert.ToInt32(Properties["ShadowType"]);
+            light.NetworkLightShape = (LightShape)Convert.ToInt32(Properties["Shape"]);
+            light.NetworkSpotAngle = Convert.ToSingle(Properties["SpotAngle"]);
+            light.NetworkInnerSpotAngle = Convert.ToSingle(Properties["InnerSpotAngle"]);
+            light.NetworkShadowStrength = Convert.ToSingle(Properties["ShadowStrength"]);
+        }
 
-		return pickup.GameObject;
-	}
+        return light.gameObject;
+    }
 
-	private GameObject CreateWorkstation()
-	{
-		WorkstationController workstation = GameObject.Instantiate(PrefabManager.Workstation);
-		workstation.NetworkStatus = (byte)(Properties.TryGetValue("IsInteractable", out object isInteractable) && Convert.ToBoolean(isInteractable) ? 0 : 4);
+    private GameObject CreatePickup(SchematicObject schematicObject)
+    {
+        if (Properties.TryGetValue("Chance", out object property) && UnityEngine.Random.Range(0, 101) > Convert.ToSingle(property))
+            return new("Empty Pickup");
 
-		return workstation.gameObject;
-	}
+        Pickup pickup = Pickup.Create((ItemType)Convert.ToInt32(Properties["ItemType"]), Vector3.zero)!;
+        if (Properties.ContainsKey("Locked"))
+            PickupEventsHandler.ButtonPickups.Add(pickup.Serial, schematicObject);
 
-	private GameObject CreateText()
-	{
-		TextToy text = GameObject.Instantiate(PrefabManager.Text);
+        return pickup.GameObject;
+    }
 
-		text.TextFormat = Convert.ToString(Properties["Text"]);
-		text.DisplaySize = Properties["DisplaySize"].ToVector2() * 20f;
+    private GameObject CreateWorkstation()
+    {
+        WorkstationController workstation = GameObject.Instantiate(PrefabManager.Workstation);
+        workstation.NetworkStatus = (byte)(Properties.TryGetValue("IsInteractable", out object isInteractable) && Convert.ToBoolean(isInteractable) ? 0 : 4);
 
-		return text.gameObject;
-	}
+        return workstation.gameObject;
+    }
 
-	private GameObject CreateInteractable()
-	{
-		InvisibleInteractableToy interactable = GameObject.Instantiate(PrefabManager.Interactable);
-		interactable.NetworkShape = (InvisibleInteractableToy.ColliderShape)Convert.ToInt32(Properties["Shape"]);
-		interactable.NetworkInteractionDuration = Convert.ToSingle(Properties["InteractionDuration"]);
-		interactable.NetworkIsLocked = Properties.TryGetValue("IsLocked", out object isLocked) && Convert.ToBoolean(isLocked);
+    private GameObject CreateText()
+    {
+        TextToy text = GameObject.Instantiate(PrefabManager.Text);
 
-		return interactable.gameObject;
-	}
+        text.TextFormat = Convert.ToString(Properties["Text"]);
+        text.DisplaySize = Properties["DisplaySize"].ToVector2() * 20f;
 
-	private GameObject CreateWaypoint()
-	{
-		WaypointToy waypoint = GameObject.Instantiate(PrefabManager.Waypoint);
-		waypoint.NetworkPriority = byte.MaxValue;
+        return text.gameObject;
+    }
 
-		return waypoint.gameObject;
-	}
+    private GameObject CreateInteractable()
+    {
+        InvisibleInteractableToy interactable = GameObject.Instantiate(PrefabManager.Interactable);
+        interactable.NetworkShape = (InvisibleInteractableToy.ColliderShape)Convert.ToInt32(Properties["Shape"]);
+        interactable.NetworkInteractionDuration = Convert.ToSingle(Properties["InteractionDuration"]);
+        interactable.NetworkIsLocked = Properties.TryGetValue("IsLocked", out object isLocked) && Convert.ToBoolean(isLocked);
+
+        return interactable.gameObject;
+    }
+
+    private GameObject CreateWaypoint()
+    {
+        WaypointToy waypoint = GameObject.Instantiate(PrefabManager.Waypoint);
+        waypoint.NetworkPriority = byte.MaxValue;
+
+        return waypoint.gameObject;
+    }
 }
