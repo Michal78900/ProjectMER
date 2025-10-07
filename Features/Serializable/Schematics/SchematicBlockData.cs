@@ -54,12 +54,20 @@ public class SchematicBlockData
 		transform.SetParent(parentTransform);
 		transform.SetLocalPositionAndRotation(Position, Quaternion.Euler(Rotation));
 
-		transform.localScale = BlockType switch
+
+		if (BlockType == BlockType.Waypoint)
 		{
-			BlockType.Empty when Scale == Vector3.zero => Vector3.one,
-			BlockType.Waypoint => Scale * SerializableWaypoint.ScaleMultiplier,
-			_ => Scale,
-		};
+			WaypointToy waypoint = gameObject.GetComponent<WaypointToy>();
+			waypoint.NetworkBoundsSize = Scale;
+		}
+		else
+		{
+			transform.localScale = BlockType switch
+			{
+				BlockType.Empty when Scale == Vector3.zero => Vector3.one,
+				_ => Scale
+			};
+		}
 
 		if (gameObject.TryGetComponent(out AdminToyBase adminToyBase))
 		{
