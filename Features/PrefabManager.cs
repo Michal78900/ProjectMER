@@ -58,6 +58,8 @@ public static class PrefabManager
 
 	public static WaypointToy Waypoint { get; private set; }
 	public static SpawnableCullingParent CullingParent { get; private set; }
+	
+	public static Scp079Generator Generator { get; private set; }
 
 	public static void RegisterPrefabs()
 	{
@@ -223,6 +225,12 @@ public static class PrefabManager
 			if (gameObject.TryGetComponent(out SpawnableCullingParent spawnableCullingParent))
 			{
 				CullingParent = spawnableCullingParent;
+				continue;
+			}
+
+			if (gameObject.TryGetComponent(out Scp079Generator scp079Generator))
+			{
+				Generator = scp079Generator;
 				continue;
 			}
 
