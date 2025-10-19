@@ -1,4 +1,6 @@
+using AdminToys;
 using Mirror;
+using NorthwoodLib.Pools;
 using ProjectMER.Features.Interfaces;
 using ProjectMER.Features.Serializable;
 using UnityEngine;
@@ -27,6 +29,11 @@ public class IndicatorObject : MapEditorObject
 			Dictionary.Add(indicator, mapEditorObject);
 		}
 
+		if (Dictionary[indicator].TryGetComponent(out WaypointToy waypoint))
+		{
+			waypoint.NetworkVisualizeBounds = true;
+		}
+
 		return true;
 	}
 
@@ -48,6 +55,11 @@ public class IndicatorObject : MapEditorObject
 		if (!TryGetIndicator(mapEditorObject, out IndicatorObject indicator))
 			return false;
 
+		if (Dictionary[indicator].TryGetComponent(out WaypointToy waypoint))
+		{
+			waypoint.NetworkVisualizeBounds = false;
+		}
+
 		Dictionary.Remove(indicator);
 		indicator.Destroy();
 		return true;
@@ -55,9 +67,11 @@ public class IndicatorObject : MapEditorObject
 
 	public static void ClearIndicators()
 	{
-		foreach (IndicatorObject indicator in Dictionary.Keys)
-			indicator.Destroy();
+		List<MapEditorObject> values = ListPool<MapEditorObject>.Shared.Rent(Dictionary.Values);
+		foreach (MapEditorObject mapEditorObject in values)
+			TryDestroyIndicator(mapEditorObject);
 
+		ListPool<MapEditorObject>.Shared.Return(values);
 		Dictionary.Clear();
 	}
 

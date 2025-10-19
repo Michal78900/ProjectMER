@@ -1,5 +1,4 @@
 using LabApi.Features.Wrappers;
-using Mirror;
 using NorthwoodLib.Pools;
 using ProjectMER.Features.Extensions;
 using ProjectMER.Features.Objects;
@@ -24,8 +23,6 @@ public class MapSchematic
 	public bool IsDirty;
 
 	public Dictionary<string, SerializablePrimitive> Primitives { get; set; } = [];
-	
-	public Dictionary<string, SerializeableGenerator> Generators { get; set; } = [];
 
 	public Dictionary<string, SerializableLight> Lights { get; set; } = [];
 
@@ -53,11 +50,14 @@ public class MapSchematic
 
 	public Dictionary<string, SerializableLocker> Lockers { get; set; } = [];
 
+	public Dictionary<string, SerializableWaypoint> Waypoints { get; set; } = [];
+	
+	public Dictionary<string, SerializableGenerator> Generators { get; set; } = [];
+
 	public List<MapEditorObject> SpawnedObjects = [];
 
 	public MapSchematic Merge(MapSchematic other)
 	{
-		Generators.AddRange(other.Generators);
 		Primitives.AddRange(other.Primitives);
 		Lights.AddRange(other.Lights);
 		Doors.AddRange(other.Doors);
@@ -72,6 +72,8 @@ public class MapSchematic
 		ShootingTargets.AddRange(other.ShootingTargets);
 		Teleports.AddRange(other.Teleports);
 		Lockers.AddRange(other.Lockers);
+		Waypoints.AddRange(other.Waypoints);
+		Generators.AddRange(other.Generators);
 
 		return this;
 	}
@@ -97,7 +99,6 @@ public class MapSchematic
 			SpawnObject(kVP.Key, kVP.Value);
 		});
 		Workstations.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
-		Generators.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		ItemSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		PlayerSpawnpoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 		Capybaras.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
@@ -112,6 +113,8 @@ public class MapSchematic
 			kVP.Value._prevType = kVP.Value.LockerType;
 			SpawnObject(kVP.Key, kVP.Value);
 		});
+		Waypoints.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
+		Generators.ForEach(kVP => SpawnObject(kVP.Key, kVP.Value));
 	}
 
 	public void SpawnObject<T>(string id, T serializableObject) where T : SerializableObject
@@ -142,7 +145,6 @@ public class MapSchematic
 
 			SpawnedObjects.Remove(mapEditorObject);
 			mapEditorObject.Destroy();
-			NetworkServer.Destroy(mapEditorObject.gameObject);
 		}
 	}
 
@@ -192,8 +194,11 @@ public class MapSchematic
 
 		if (Lockers.TryAdd(id, serializableObject))
 			return true;
+
+		if (Waypoints.TryAdd(id, serializableObject))
+			return true;
 		
-		if (Generators.TryAdd(id, serializableObject))
+		if(Generators.TryAdd(id, serializableObject))
 			return true;
 
 		IsDirty = dirtyPrevValue;
@@ -246,10 +251,13 @@ public class MapSchematic
 
 		if (Lockers.Remove(id))
 			return true;
-    
-		if (Generators.Remove(id))
+
+		if (Waypoints.Remove(id))
 			return true;
 		
+		if (Generators.Remove(id))
+			return true;
+
 		IsDirty = dirtyPrevValue;
 		return false;
 	}

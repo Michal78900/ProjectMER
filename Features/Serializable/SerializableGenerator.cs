@@ -1,14 +1,14 @@
-﻿using GameCore;
-using Interactables.Interobjects.DoorUtils;
+﻿using Interactables.Interobjects.DoorUtils;
 using LabApi.Features.Wrappers;
 using MapGeneration.Distributors;
 using Mirror;
+using ProjectMER.Commands.Modifying.Scale;
 using ProjectMER.Features.Extensions;
 using UnityEngine;
 
 namespace ProjectMER.Features.Serializable;
 
-public class SerializeableGenerator : SerializableObject
+public class SerializableGenerator : SerializableObject
 {
     public bool IsUnlocked { get; set; } = false;
 

@@ -19,6 +19,7 @@ public static class PrefabManager
 	public static DoorVariant DoorHcz { get; private set; }
 	public static DoorVariant DoorEz { get; private set; }
 	public static DoorVariant DoorHeavyBulk { get; private set; }
+	public static DoorVariant DoorGate { get; private set; }
 
 	public static WorkstationController Workstation { get; private set; }
 
@@ -37,8 +38,7 @@ public static class PrefabManager
 	public static ShootingTarget ShootingTargetSport { get; private set; }
 	public static ShootingTarget ShootingTargetDBoy { get; private set; }
 	public static ShootingTarget ShootingTargetBinary { get; private set; }
-	
-	public static Scp079Generator Generator { get; private set; }
+
 	public static Locker PedestalScp018 { get; private set; }
 	public static Locker PedstalScp207 { get; private set; }
 	public static Locker PedestalScp244 { get; private set; }
@@ -55,6 +55,11 @@ public static class PrefabManager
 	public static Locker PedestalAntiScp207 { get; private set; }
 	public static Locker PedestalScp1344 { get; private set; }
 	public static Locker LockerExperimentalWeapon { get; private set; }
+
+	public static WaypointToy Waypoint { get; private set; }
+	public static SpawnableCullingParent CullingParent { get; private set; }
+	
+	public static Scp079Generator Generator { get; private set; }
 
 	public static void RegisterPrefabs()
 	{
@@ -88,6 +93,9 @@ public static class PrefabManager
 					case "HCZ BulkDoor":
 						DoorHeavyBulk = doorVariant;
 						continue;
+					case "Spawnable Unsecured Pryable GateDoor":
+						DoorGate = doorVariant;
+						continue;
 				}
 			}
 
@@ -116,12 +124,6 @@ public static class PrefabManager
 			if (gameObject.TryGetComponent(out CapybaraToy capybaraToy))
 			{
 				Capybara = capybaraToy;
-				continue;
-			}
-			
-			if (gameObject.TryGetComponent(out Scp079Generator generator))
-			{
-				Generator = generator;
 				continue;
 			}
 
@@ -213,6 +215,25 @@ public static class PrefabManager
 						continue;
 				}
 			}
+
+			if (gameObject.TryGetComponent(out WaypointToy waypointToy))
+			{
+				Waypoint = waypointToy;
+				continue;
+			}
+			
+			if (gameObject.TryGetComponent(out SpawnableCullingParent spawnableCullingParent))
+			{
+				CullingParent = spawnableCullingParent;
+				continue;
+			}
+
+			if (gameObject.TryGetComponent(out Scp079Generator scp079Generator))
+			{
+				Generator = scp079Generator;
+				continue;
+			}
+
 		}
 	}
 }

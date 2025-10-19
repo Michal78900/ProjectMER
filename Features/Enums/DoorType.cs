@@ -10,4 +10,5 @@ public enum DoorType
 	EntranceDoor = 2,
 	Bulkdoor = 3,
 	HeavyBulkDoor = 3,
+	Gate = 4,
 }

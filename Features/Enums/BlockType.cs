@@ -47,4 +47,5 @@ public enum BlockType
 
 	Text = 8,
 	Interactable = 9,
+	Waypoint = 10,
 }

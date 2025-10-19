@@ -32,7 +32,7 @@ public class SerializableDoor : SerializableObject
 		{
 			doorVariant = instance.GetComponent<DoorVariant>();
 		}
-  
+
 		doorVariant.transform.SetPositionAndRotation(position, rotation);
 		doorVariant.transform.localScale = Scale;
 
@@ -62,6 +62,7 @@ public class SerializableDoor : SerializableObject
 				DoorType.Hcz => PrefabManager.DoorHcz,
 				DoorType.Ez => PrefabManager.DoorEz,
 				DoorType.Bulkdoor => PrefabManager.DoorHeavyBulk,
+				DoorType.Gate => PrefabManager.DoorGate,
 				_ => throw new InvalidOperationException(),
 			};
 

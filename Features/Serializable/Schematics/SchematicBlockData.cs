@@ -9,6 +9,7 @@ using UnityEngine;
 using LightSourceToy = AdminToys.LightSourceToy;
 using PrimitiveObjectToy = AdminToys.PrimitiveObjectToy;
 using TextToy = AdminToys.TextToy;
+using WaypointToy = AdminToys.WaypointToy;
 
 namespace ProjectMER.Features.Serializable.Schematics;
 
@@ -43,6 +44,7 @@ public class SchematicBlockData
 			BlockType.Workstation => CreateWorkstation(),
 			BlockType.Text => CreateText(),
 			BlockType.Interactable => CreateInteractable(),
+			BlockType.Waypoint => CreateWaypoint(),
 			_ => CreateEmpty(true)
 		};
 
@@ -51,7 +53,13 @@ public class SchematicBlockData
 		Transform transform = gameObject.transform;
 		transform.SetParent(parentTransform);
 		transform.SetLocalPositionAndRotation(Position, Quaternion.Euler(Rotation));
-		transform.localScale = BlockType == BlockType.Empty && Scale == Vector3.zero ? Vector3.one : Scale;
+
+		transform.localScale = BlockType switch
+		{
+			BlockType.Empty when Scale == Vector3.zero => Vector3.one,
+			BlockType.Waypoint => Scale * SerializableWaypoint.ScaleMultiplier,
+			_ => Scale,
+		};
 
 		if (gameObject.TryGetComponent(out AdminToyBase adminToyBase))
 		{
@@ -168,5 +176,13 @@ public class SchematicBlockData
 		interactable.NetworkIsLocked = Properties.TryGetValue("IsLocked", out object isLocked) && Convert.ToBoolean(isLocked);
 
 		return interactable.gameObject;
+	}
+
+	private GameObject CreateWaypoint()
+	{
+		WaypointToy waypoint = GameObject.Instantiate(PrefabManager.Waypoint);
+		waypoint.NetworkPriority = byte.MaxValue;
+
+		return waypoint.gameObject;
 	}
 }

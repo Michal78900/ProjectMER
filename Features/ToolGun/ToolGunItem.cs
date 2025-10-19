@@ -32,8 +32,9 @@ public class ToolGunItem
 		{ ToolGunObjectType.ShootingTarget, typeof(SerializableShootingTarget) },
 		{ ToolGunObjectType.Locker, typeof(SerializableLocker) },
 		{ ToolGunObjectType.Teleport, typeof(SerializableTeleport) },
-		{ToolGunObjectType.Generator, typeof(SerializeableGenerator)},
-		{ ToolGunObjectType.Interactable, typeof(SerializableInteractable) }
+		{ ToolGunObjectType.Interactable, typeof(SerializableInteractable) },
+		{ ToolGunObjectType.Waypoint, typeof(SerializableWaypoint) },
+		{ ToolGunObjectType.Generator, typeof(SerializableGenerator)}
 	};
 
 	private ToolGunObjectType _selectedObjectToSpawn;
@@ -85,7 +86,7 @@ public class ToolGunItem
 		ServerSpecificSettingsSync.DefinedSettings =
 		[
 			new SSGroupHeader("MapEditorReborn"),
-			new SSDropdownSetting(0, "Schematic Name", MapUtils.GetAvailableSchematicNames())
+			new SSDropdownSetting(0, "Schematic Name", MapUtils.GetAvailableSchematicNames(), isServerOnly: true)
 		];
 
 		ServerSpecificSettingsSync.SendToPlayersConditionally(x => x.inventory.UserInventory.Items.Values.Any(x => x.IsToolGun(out ToolGunItem _)));

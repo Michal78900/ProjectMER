@@ -12,8 +12,6 @@ namespace ProjectMER.Features.Objects;
 
 public class SchematicObject : MonoBehaviour
 {
-	public SchematicObjectDataList SchematicData { get; private set; }
-
 	/// <summary>
 	/// Gets the schematic name.
 	/// </summary>
@@ -129,11 +127,10 @@ public class SchematicObject : MonoBehaviour
 
 	public SchematicObject Init(SchematicObjectDataList data)
 	{
-		SchematicData = data;
 		Name = Path.GetFileNameWithoutExtension(data.Path);
 		DirectoryPath = data.Path;
 
-		ObjectFromId = new Dictionary<int, Transform>(SchematicData.Blocks.Count + 1)
+		ObjectFromId = new Dictionary<int, Transform>(data.Blocks.Count + 1)
 		{
 			{ data.RootObjectId, transform },
 		};
