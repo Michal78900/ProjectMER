@@ -14,6 +14,7 @@ namespace ProjectMER.Features.Serializable;
 public class SerializableItemSpawnpoint : SerializableObject, IIndicatorDefinition
 {
 	public ItemType ItemType { get; set; } = ItemType.Lantern;
+	public string CustomItem { get; set; } = string.Empty;
 	public float Weight { get; set; } = -1;
 	public string AttachmentsCode { get; set; } = "-1";
 	public uint NumberOfItems { get; set; } = 1;
@@ -41,7 +42,14 @@ public class SerializableItemSpawnpoint : SerializableObject, IIndicatorDefiniti
 
 		for (int i = 0; i < NumberOfItems; i++)
 		{
-			Pickup pickup = Pickup.Create(ItemType, position, rotation, Scale)!;
+			Pickup? pickup = CustomItem != string.Empty ? ExiledExtensions.TrySpawn(CustomItem, position, rotation, Scale) : Pickup.Create(ItemType, position, rotation, Scale);
+
+			if (pickup is null)
+			{
+				// there is no Debug config option?
+				// Logger.Debug($"Failed to spawn an item with CustomItem: {CustomItem}", true);
+				continue;
+			}
 
 			pickup.Transform.parent = itemSpawnPoint.transform;
 			if (Weight != -1)

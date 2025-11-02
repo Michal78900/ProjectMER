@@ -143,7 +143,17 @@ public class SchematicBlockData
 		if (Properties.TryGetValue("Chance", out object property) && UnityEngine.Random.Range(0, 101) > Convert.ToSingle(property))
 			return new("Empty Pickup");
 
-		Pickup pickup = Pickup.Create((ItemType)Convert.ToInt32(Properties["ItemType"]), Vector3.zero)!;
+		Pickup? pickup = null;
+		if (Properties["CustomItem"] is string str && str != string.Empty)
+		{
+			ExiledExtensions.TrySpawnCustomItem(str, Vector3.zero, out pickup);
+		}
+
+		pickup ??= Pickup.Create((ItemType)Convert.ToInt32(Properties["ItemType"]), Vector3.zero);
+
+		if (pickup is null)
+			return new("Empty Pickup");
+
 		if (Properties.ContainsKey("Locked"))
 			PickupEventsHandler.ButtonPickups.Add(pickup.Serial, schematicObject);
 
