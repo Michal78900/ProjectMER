@@ -12,59 +12,31 @@ namespace ProjectMER.Features.Objects;
 
 public class SchematicObject : MonoBehaviour
 {
-	/// <summary>
-	/// Gets the schematic name.
-	/// </summary>
 	public string Name { get; private set; }
-
-	/// <summary>
-	/// Gets a schematic directory path.
-	/// </summary>
 	public string DirectoryPath { get; private set; }
 
-	/// <summary>
-	/// Gets or sets the global position of the object.
-	/// </summary>
 	public Vector3 Position
 	{
 		get => transform.position;
-		set
-		{
-			transform.position = value;
-		}
+		set => transform.position = value;
 	}
 
-	/// <summary>
-	/// Gets or sets the global rotation of the object.
-	/// </summary>
 	public Quaternion Rotation
 	{
 		get => transform.rotation;
-		set
-		{
-			transform.rotation = value;
-		}
+		set => transform.rotation = value;
 	}
 
-	/// <summary>
-	/// Gets or sets the global euler angles of the object.
-	/// </summary>
 	public Vector3 EulerAngles
 	{
 		get => Rotation.eulerAngles;
 		set => Rotation = Quaternion.Euler(value);
 	}
 
-	/// <summary>
-	/// Gets or sets the scale of the object.
-	/// </summary>
 	public Vector3 Scale
 	{
 		get => transform.localScale;
-		set
-		{
-			transform.localScale = value;
-		}
+		set => transform.localScale = value;
 	}
 
 	public IReadOnlyList<GameObject> AttachedBlocks
@@ -147,16 +119,15 @@ public class SchematicObject : MonoBehaviour
 
 	private void CreateRecursiveFromID(int id, List<SchematicBlockData> blocks, Transform parentGameObject)
 	{
-		Transform childGameObjectTransform = CreateObject(blocks.Find(c => c.ObjectId == id), parentGameObject) ?? transform; // Create the object first before creating children.
+		Transform childGameObjectTransform = CreateObject(blocks.Find(c => c.ObjectId == id), parentGameObject) ?? transform;
 		int[] parentSchematics = blocks.Where(bl => bl.BlockType == BlockType.Schematic).Select(bl => bl.ObjectId).ToArray();
 
-		// Gets all the ObjectIds of all the schematic blocks inside "blocks" argument.
 		foreach (SchematicBlockData block in blocks.FindAll(c => c.ParentId == id))
 		{
-			if (parentSchematics.Contains(block.ParentId)) // The block is a child of some schematic inside "parentSchematics" array, therefore it will be skipped to avoid spawning it and its children twice.
+			if (parentSchematics.Contains(block.ParentId))
 				continue;
 
-			CreateRecursiveFromID(block.ObjectId, blocks, childGameObjectTransform); // The child now becomes the parent
+			CreateRecursiveFromID(block.ObjectId, blocks, childGameObjectTransform);
 		}
 	}
 
@@ -243,7 +214,6 @@ public class SchematicObject : MonoBehaviour
 		return hasRigidbodies;
 	}
 
-
 	public void Destroy() => Destroy(gameObject);
 
 	private void OnDestroy()
@@ -254,7 +224,6 @@ public class SchematicObject : MonoBehaviour
 	}
 
 	internal Dictionary<int, Transform> ObjectFromId = [];
-
 	private readonly List<GameObject> _attachedBlocks = [];
 	private readonly List<NetworkIdentity> _networkIdentities = [];
 	private readonly List<AdminToyBase> _adminToyBases = [];
