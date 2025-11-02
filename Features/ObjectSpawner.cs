@@ -37,6 +37,23 @@ public static class ObjectSpawner
 
 	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, Vector3 scale) =>
 		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Scale = scale });
+	
+	//Data section
+	
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, SchematicObjectDataList data) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Data = data });
+
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, SchematicObjectDataList data) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles, Data = data });
+
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, SchematicObjectDataList data) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Data = data });
+
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Quaternion rotation, Vector3 scale, SchematicObjectDataList data) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = rotation.eulerAngles, Scale = scale, Data = data });
+
+	public static SchematicObject SpawnSchematic(string schematicName, Vector3 position, Vector3 eulerAngles, Vector3 scale, SchematicObjectDataList data) =>
+		SpawnSchematic(new() { SchematicName = schematicName, Position = position, Rotation = eulerAngles, Scale = scale, Data = data });
 
 	public static bool TrySpawnSchematic(SerializableSchematic serializableSchematic, out SchematicObject schematic)
 	{

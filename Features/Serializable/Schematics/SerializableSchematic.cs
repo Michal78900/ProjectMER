@@ -14,6 +14,8 @@ public class SerializableSchematic : SerializableObject
 {
 	public string SchematicName { get; set; } = "None";
 
+	public SchematicObjectDataList Data { get; set; } = null;
+	
 	public override GameObject? SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
 	{
 		PrimitiveObjectToy schematic = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObject) : instance.GetComponent<PrimitiveObjectToy>();
@@ -28,10 +30,15 @@ public class SerializableSchematic : SerializableObject
 		schematic.transform.SetPositionAndRotation(position, rotation);
 		schematic.transform.localScale = Scale;
 
+		SchematicObjectDataList? data = null;
+		
 		if (instance == null)
 		{
-			_ = MapUtils.TryGetSchematicDataByName(SchematicName, out SchematicObjectDataList? data) ? data : null;
-
+			if(Data is null)
+				_ = MapUtils.TryGetSchematicDataByName(SchematicName, out data) ? data : null;
+			else
+				data = Data;
+			
 			if (data == null)
 			{
 				GameObject.Destroy(schematic.gameObject);
