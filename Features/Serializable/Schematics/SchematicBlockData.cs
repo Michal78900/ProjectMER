@@ -1,4 +1,6 @@
 using AdminToys;
+using GameCore;
+using Interactables.Interobjects.DoorUtils;
 using InventorySystem.Items.Firearms.Attachments;
 using LabApi.Features.Wrappers;
 using ProjectMER.Events.Handlers.Internal;
@@ -44,6 +46,7 @@ public class SchematicBlockData
 			BlockType.Workstation => CreateWorkstation(),
 			BlockType.Text => CreateText(),
 			BlockType.Interactable => CreateInteractable(),
+			BlockType.Door => CreateDoor(),
 			BlockType.Waypoint => CreateWaypoint(),
 			_ => CreateEmpty(true)
 		};
@@ -60,6 +63,13 @@ public class SchematicBlockData
 			BlockType.Waypoint => Scale * SerializableWaypoint.ScaleMultiplier,
 			_ => Scale,
 		};
+
+		// if you don't remove the parent before NetworkServer.Spawn then there won't be a door
+		if (BlockType == BlockType.Door)
+		{
+			transform.SetParent(null);
+		}
+		
 
 		if (gameObject.TryGetComponent(out AdminToyBase adminToyBase))
 		{
@@ -156,6 +166,27 @@ public class SchematicBlockData
 		workstation.NetworkStatus = (byte)(Properties.TryGetValue("IsInteractable", out object isInteractable) && Convert.ToBoolean(isInteractable) ? 0 : 4);
 
 		return workstation.gameObject;
+	}
+
+	private GameObject CreateDoor()
+	{
+		DoorVariant prefab = (DoorType)Convert.ToInt32(Properties["DoorType"]) switch
+		{
+			DoorType.Hcz or DoorType.HeavyContainmentDoor => PrefabManager.DoorHcz,
+			DoorType.Bulkdoor or DoorType.HeavyBulkDoor => PrefabManager.DoorHeavyBulk,
+			DoorType.Lcz or DoorType.LightContainmentDoor => PrefabManager.DoorLcz,
+			DoorType.Ez or DoorType.EntranceDoor => PrefabManager.DoorEz,
+			DoorType.Gate => PrefabManager.DoorGate,
+			_ => PrefabManager.DoorEz
+		};
+
+		DoorVariant doorVariant = GameObject.Instantiate(prefab);
+		doorVariant.NetworkTargetState = Convert.ToBoolean(Properties["IsOpen"]);
+		doorVariant.ServerChangeLock(DoorLockReason.SpecialDoorFeature, Convert.ToBoolean(Properties["IsLocked"]));
+		doorVariant.RequiredPermissions = new DoorPermissionsPolicy(
+			(DoorPermissionFlags)Convert.ToUInt16(Properties["RequiredPermissions"]),
+			Convert.ToBoolean(Properties["RequireAll"]));
+		return doorVariant.gameObject;
 	}
 
 	private GameObject CreateText()

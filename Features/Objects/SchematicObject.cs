@@ -167,6 +167,12 @@ public class SchematicObject : MonoBehaviour
 
 		GameObject gameObject = block.Create(this, parentTransform);
 		NetworkServer.Spawn(gameObject);
+		
+		// We return the parent for the door so that when deleting the schematic, the door is deleted
+		if (block.BlockType == BlockType.Door)
+		{
+			gameObject.transform.SetParent(parentTransform);
+		}
 
 		ObjectFromId.Add(block.ObjectId, gameObject.transform);
 
