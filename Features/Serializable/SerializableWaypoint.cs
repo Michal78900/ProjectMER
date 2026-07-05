@@ -11,7 +11,6 @@ namespace ProjectMER.Features.Serializable;
 
 public class SerializableWaypoint : SerializableObject, IIndicatorDefinition
 {
-	public const float ScaleMultiplier = 1 / 256f;
 
 	public override GameObject? SpawnOrUpdateObject(Room? room = null, GameObject? instance = null)
 	{
@@ -21,7 +20,7 @@ public class SerializableWaypoint : SerializableObject, IIndicatorDefinition
 		_prevIndex = Index;
 
 		waypoint.transform.SetPositionAndRotation(position, rotation);
-		waypoint.transform.localScale = Scale * ScaleMultiplier;
+		waypoint.NetworkBoundsSize = Vector3.one;
 		waypoint.NetworkMovementSmoothing = 60;
 		waypoint.NetworkVisualizeBounds = true;
 

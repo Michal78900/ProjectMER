@@ -57,11 +57,10 @@ public class SchematicBlockData
 		transform.localScale = BlockType switch
 		{
 			BlockType.Empty when Scale == Vector3.zero => Vector3.one,
-			BlockType.Waypoint => Scale * SerializableWaypoint.ScaleMultiplier,
-			_ => Scale,
+            BlockType.Waypoint => ApplyWaypointBounds(Scale, transform),
+            _ => Scale,
 		};
-
-		if (gameObject.TryGetComponent(out AdminToyBase adminToyBase))
+		if (gameObject.TryGetComponent(out AdminToyBase adminToyBase) && gameObject.GetComponent<WaypointToy>() == null)
 		{
 			if (Properties != null && Properties.TryGetValue("Static", out object isStatic) && Convert.ToBoolean(isStatic))
 			{
@@ -75,8 +74,17 @@ public class SchematicBlockData
 
 		return gameObject;
 	}
+    private static Vector3 ApplyWaypointBounds(Vector3 scale, Transform t)
+    {
+        if (t.TryGetComponent<WaypointToy>(out var wp))
+		{
+			LabApi.Features.Wrappers.WaypointToy waypointToy = LabApi.Features.Wrappers.WaypointToy.Get(wp);
+			waypointToy.BoundsSize = scale;
+        }
+        return scale;
+    }
 
-	private GameObject CreateEmpty(bool fallback = false)
+    private GameObject CreateEmpty(bool fallback = false)
 	{
 		if (fallback)
 			Logger.Warn($"{BlockType} is not yet implemented. Object will be an empty GameObject instead.");
