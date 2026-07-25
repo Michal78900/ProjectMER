@@ -10,6 +10,7 @@ using ProjectMER.Commands.Modifying.Scale;
 using ProjectMER.Commands.ToolGunLike;
 using ProjectMER.Commands.Utility;
 
+
 namespace ProjectMER.Commands;
 
 /// <summary>
@@ -35,6 +36,8 @@ public class MapEditorParentCommand : ParentCommand
 		RegisterCommand(new List());
 		RegisterCommand(new Indicators());
 		RegisterCommand(new Merge());
+		RegisterCommand(new VersionCommand());
+		RegisterCommand(new StaticCheck());
 
 		RegisterCommand(new Position());
 		RegisterCommand(new Rotation());

@@ -1,0 +1,61 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x' # Fits LangVersion 12 and target framework net48 builds on linux
+
+    - name: Restore dependencies
+      run: dotnet restore ProjectMER.csproj
+
+    - name: Build ProjectMER
+      run: dotnet build ProjectMER.csproj -c Release
+
+    - name: Get Changelog Entry
+      id: changelog
+      run: |
+        # Get the tag name (e.g., v1.0.0)
+        TAG_NAME=${{ github.ref_name }}
+        # Remove the 'v' prefix to match version in CHANGELOG (e.g., 1.0.0)
+        VERSION=${TAG_NAME#v}
+        
+        echo "Extracting changelog for version $VERSION..."
+        
+        if [ -f CHANGELOG.md ]; then
+          # Extract lines between the matching version header and the next header
+          # Matches markdown headers like "## [1.0.0]" or "## 1.0.0"
+          CHANGELOG_CONTENT=$(sed -n "/^## \[\{0,1\}$VERSION\]\{0,1\}/,/^## /p" CHANGELOG.md | sed '1d;$d')
+        else
+          CHANGELOG_CONTENT="Automated release for $TAG_NAME"
+        fi
+        
+        # Escape multi-line string for github actions output
+        EOF=$(dd if=/dev/urandom bs=15 count=1 2>/dev/null | base64 | tr -dc 'a-zA-Z0-9')
+        echo "notes<<$EOF" >> $GITHUB_OUTPUT
+        echo "$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+        echo "$EOF" >> $GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        body: ${{ steps.changelog.outputs.notes }}
+        files: bin/Release/net4.8/ProjectMER.dll
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
