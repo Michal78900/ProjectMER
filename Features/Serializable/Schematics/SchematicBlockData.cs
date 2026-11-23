@@ -33,6 +33,12 @@ public class SchematicBlockData
 
 	public virtual Dictionary<string, object> Properties { get; set; }
 
+	/// <summary>
+	/// Returns true if this block has Static=true in its Properties.
+	/// Used to apply NetworkIsStatic AFTER NetworkServer.Spawn() to avoid Mirror SyncVar initialization order issues.
+	/// </summary>
+	public bool IsStatic => Properties != null && Properties.TryGetValue("Static", out object isStatic) && Convert.ToBoolean(isStatic);
+
 	public GameObject Create(SchematicObject schematicObject, Transform parentTransform)
 	{
 		GameObject gameObject = BlockType switch
@@ -43,7 +49,7 @@ public class SchematicBlockData
 			BlockType.Pickup => CreatePickup(schematicObject),
 			BlockType.Workstation => CreateWorkstation(),
 			BlockType.Text => CreateText(),
-			BlockType.Interactable => CreateInteractable(),
+			BlockType.Interactable => CreateInteractable(schematicObject),
 			BlockType.Waypoint => CreateWaypoint(),
 			_ => CreateEmpty(true)
 		};
@@ -65,14 +71,9 @@ public class SchematicBlockData
 
 		if (gameObject.TryGetComponent(out AdminToyBase adminToyBase))
 		{
-			if (Properties != null && Properties.TryGetValue("Static", out object isStatic) && Convert.ToBoolean(isStatic))
-			{
-				adminToyBase.NetworkIsStatic = true;
-			}
-			else
-			{
+			adminToyBase.NetworkIsStatic = IsStatic;
+			if (!IsStatic)
 				adminToyBase.NetworkMovementSmoothing = 60;
-			}
 		}
 
 		return gameObject;
@@ -146,6 +147,22 @@ public class SchematicBlockData
 			return new("Empty Pickup");
 
 		Pickup pickup = Pickup.Create((ItemType)Convert.ToInt32(Properties["ItemType"]), Vector3.zero)!;
+
+		if (pickup is FirearmPickup firearmPickup && Properties.TryGetValue("AttachmentsCode", out object attachmentsCodeObj))
+		{
+			string codeStr = Convert.ToString(attachmentsCodeObj);
+			if (uint.TryParse(codeStr, out uint code) && code != uint.MaxValue)
+			{
+				firearmPickup.AttachmentCode = code;
+			}
+		}
+
+		int uses = Properties.TryGetValue("Uses", out object usesObj) ? Convert.ToInt32(usesObj) : 1;
+		if (uses != 1)
+		{
+			PickupEventsHandler.PickupUsesLeft[pickup.Serial] = uses;
+		}
+
 		if (Properties.ContainsKey("Locked"))
 			PickupEventsHandler.ButtonPickups.Add(pickup.Serial, schematicObject);
 
@@ -170,12 +187,67 @@ public class SchematicBlockData
 		return text.gameObject;
 	}
 
-	private GameObject CreateInteractable()
+	private GameObject CreateInteractable(SchematicObject schematicObject)
 	{
 		InvisibleInteractableToy interactable = GameObject.Instantiate(PrefabManager.Interactable);
 		interactable.NetworkShape = (InvisibleInteractableToy.ColliderShape)Convert.ToInt32(Properties["Shape"]);
 		interactable.NetworkInteractionDuration = Convert.ToSingle(Properties["InteractionDuration"]);
 		interactable.NetworkIsLocked = Properties.TryGetValue("IsLocked", out object isLocked) && Convert.ToBoolean(isLocked);
+
+		if (Properties.TryGetValue("TargetAnimatorId", out object targetIdObj) && Properties.TryGetValue("AnimationStateName", out object stateNameObj))
+		{
+			int targetId = Convert.ToInt32(targetIdObj);
+			string stateName = Convert.ToString(stateNameObj);
+
+			if (targetId != 0 && !string.IsNullOrEmpty(stateName))
+			{
+				bool isToggled = false;
+				Action<ReferenceHub> action = (ReferenceHub hub) =>
+				{
+					if (ProjectMER.Singleton.Config.debug)
+					{
+						Player? player = Player.Get(hub.gameObject);
+						Logger.Info($"[DEBUG] Player {(player != null ? player.Nickname : "Unknown")} interacted with Interactable block '{Name}' (ID: {ObjectId}).");
+					}
+
+					if (schematicObject.ObjectFromId.TryGetValue(targetId, out Transform targetTransform))
+					{
+						Animator animator = targetTransform.gameObject.GetComponent<Animator>() ?? 
+											targetTransform.gameObject.GetComponentInChildren<Animator>() ?? 
+											targetTransform.gameObject.GetComponentInParent<Animator>();
+
+						if (animator != null)
+						{
+							string stateToPlay = stateName;
+							if (Properties.TryGetValue("AnimationStateName2", out object stateName2Obj) && !string.IsNullOrEmpty(Convert.ToString(stateName2Obj)))
+							{
+								string stateName2 = Convert.ToString(stateName2Obj);
+								stateToPlay = isToggled ? stateName : stateName2;
+								isToggled = !isToggled;
+							}
+
+							if (ProjectMER.Singleton.Config.debug)
+							{
+								Logger.Info($"[DEBUG] Playing animation state '{stateToPlay}' on Animator '{animator.name}' (Target: '{targetTransform.name}', ID: {targetId}).");
+							}
+
+							animator.Play(stateToPlay);
+						}
+						else if (ProjectMER.Singleton.Config.debug)
+						{
+							Logger.Info($"[DEBUG] Animator NOT found on target '{targetTransform.name}' (ID: {targetId}) or its parents/children.");
+						}
+					}
+					else if (ProjectMER.Singleton.Config.debug)
+					{
+						Logger.Info($"[DEBUG] Target object ID {targetId} NOT found in schematic's ObjectFromId dictionary.");
+					}
+				};
+
+				interactable.OnInteracted += action;
+				interactable.OnSearched += action;
+			}
+		}
 
 		return interactable.gameObject;
 	}
@@ -183,7 +255,16 @@ public class SchematicBlockData
 	private GameObject CreateWaypoint()
 	{
 		WaypointToy waypoint = GameObject.Instantiate(PrefabManager.Waypoint);
-		waypoint.NetworkPriority = byte.MaxValue;
+
+		if (Properties != null && Properties.TryGetValue("Priority", out object priorityObj))
+		{
+			int val = Convert.ToInt32(priorityObj);
+			waypoint.NetworkPriority = (byte)Math.Max(0, Math.Min(255, val));
+		}
+		else
+		{
+			waypoint.NetworkPriority = byte.MaxValue; // backwards compat: default 255
+		}
 
 		return waypoint.gameObject;
 	}

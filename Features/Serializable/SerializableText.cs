@@ -24,6 +24,7 @@ public class SerializableText : SerializableObject, IIndicatorDefinition
 
 		text.transform.SetPositionAndRotation(position, rotation);
 		text.transform.localScale = Scale;
+		text.NetworkIsStatic = false;
 		text.NetworkMovementSmoothing = 60;
 
 		text.Network_textFormat = Text;

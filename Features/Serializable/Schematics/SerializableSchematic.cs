@@ -18,6 +18,7 @@ public class SerializableSchematic : SerializableObject
 	{
 		PrimitiveObjectToy schematic = instance == null ? UnityEngine.Object.Instantiate(PrefabManager.PrimitiveObject) : instance.GetComponent<PrimitiveObjectToy>();
 		schematic.NetworkPrimitiveFlags = PrimitiveFlags.None;
+		schematic.NetworkIsStatic = false;
 		schematic.NetworkMovementSmoothing = 60;
 
 		Vector3 position = room.GetAbsolutePosition(Position);

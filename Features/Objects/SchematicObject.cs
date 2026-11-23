@@ -168,13 +168,32 @@ public class SchematicObject : MonoBehaviour
 		GameObject gameObject = block.Create(this, parentTransform);
 		NetworkServer.Spawn(gameObject);
 
-		ObjectFromId.Add(block.ObjectId, gameObject.transform);
+		// Apply NetworkIsStatic / NetworkMovementSmoothing AFTER spawning.
+		// Setting Mirror SyncVars before NetworkServer.Spawn() causes initialization
+		// order issues where the static flag is silently lost, resulting in the server
+		// sending position updates every tick even for fully static objects.
+		if (gameObject.TryGetComponent(out AdminToyBase adminToyBase))
+		{
+			adminToyBase.NetworkIsStatic = block.IsStatic;
+			if (!block.IsStatic)
+				adminToyBase.NetworkMovementSmoothing = 60;
+
+			// Reset parent to trigger Unity's OnTransformParentChanged callback.
+			// This forces RpcChangeParent to run after spawning, syncing the parent-child relationship to clients.
+			gameObject.transform.SetParent(null);
+			gameObject.transform.SetParent(parentTransform);
+			gameObject.transform.SetLocalPositionAndRotation(block.Position, Quaternion.Euler(block.Rotation));
+		}
+
+		if (!ObjectFromId.ContainsKey(block.ObjectId))
+			ObjectFromId.Add(block.ObjectId, gameObject.transform);
 
 		if (block.BlockType != BlockType.Light && TryGetAnimatorController(block.AnimatorName, out RuntimeAnimatorController animatorController))
 			_animators.Add(gameObject, animatorController);
 
 		return gameObject.transform;
 	}
+
 
 	private bool TryGetAnimatorController(string animatorName, out RuntimeAnimatorController animatorController)
 	{

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <LangVersion>12</LangVersion>
@@ -6,7 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <SL_REFERENCES Condition="'$(SL_REFERENCES)' == ''">$(MSBuildThisFileDirectory)References</SL_REFERENCES>
+    <AssemblyName>ProjectMER</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
+
 
   <ItemGroup>
     <Reference Include="UnityEngine" HintPath="$(SL_REFERENCES)\UnityEngine.dll" />
