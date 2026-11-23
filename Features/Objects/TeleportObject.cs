@@ -20,6 +20,10 @@ public class TeleportObject : MonoBehaviour
 
 	public TeleportObject? GetRandomTarget()
 	{
+		
+		if (Base.Targets.Count == 0)
+			return null;
+
 		string targetId = Base.Targets.RandomItem();
 
 		foreach (TeleportObject teleportObject in FindObjectsByType<TeleportObject>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
