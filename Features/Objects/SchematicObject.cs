@@ -140,7 +140,11 @@ public class SchematicObject : MonoBehaviour
 		AddRigidbodies();
 		AddAnimators();
 
-		Schematic.OnSchematicSpawned(new(this, Name));
+        // Load teleports after creating regular schematic objects,
+        // so all potential parent objects are already available.
+        AddTeleports();
+
+        Schematic.OnSchematicSpawned(new(this, Name));
 
 		return this;
 	}
@@ -243,8 +247,75 @@ public class SchematicObject : MonoBehaviour
 		return hasRigidbodies;
 	}
 
+    /// <summary>
+    /// Loads teleport data from a separate schematic file
+    /// and creates game objects with trigger components.
+    /// </summary>
+    private bool AddTeleports()
+    {
+        // Unity exports teleport data into a separate file.
+        string teleportPath = Path.Combine(DirectoryPath, $"{Name}-Teleports.json");
 
-	public void Destroy() => Destroy(gameObject);
+        // Skip teleport loading if the file does not exist.
+        if (!File.Exists(teleportPath))
+            return false;
+
+        // Read the JSON file and deserialize it into teleport data.
+        List<SchematicTeleportData> teleports =
+            JsonSerializer.Deserialize<List<SchematicTeleportData>>(File.ReadAllText(teleportPath));
+
+        if (teleports == null || teleports.Count == 0)
+            return false;
+
+        // Stores all created teleports.
+        // The key is the teleport's ObjectId, used to find target teleporters.
+        Dictionary<int, SchematicTeleportObject> teleportObjects = new();
+
+        foreach (SchematicTeleportData data in teleports)
+        {
+            // Try to find the parent object using ParentId.
+            // If it cannot be found, use the schematic root as the parent.
+            Transform parent = ObjectFromId.TryGetValue(data.ParentId, out Transform parentTransform)
+                ? parentTransform
+                : transform;
+
+            GameObject gameObject = new GameObject(data.Name);
+
+            gameObject.transform.SetParent(parent);
+
+            // Restore the teleport's local position, rotation, and scale
+            // using the data exported from Unity.
+            gameObject.transform.SetLocalPositionAndRotation(
+                data.Position,
+                Quaternion.Euler(data.Rotation)
+            );
+
+            gameObject.transform.localScale = data.Scale;
+
+            // Create a trigger collider to detect players
+            // entering the teleport's area.
+            BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+            collider.isTrigger = true;
+
+            // Add the component responsible for teleport functionality
+            // and assign the data loaded from the schematic.
+            SchematicTeleportObject teleportObject = gameObject.AddComponent<SchematicTeleportObject>();
+            teleportObject.Base = data;
+
+            // Store the teleport by its ObjectId so other teleports
+            // can find it when selecting a destination.
+            teleportObjects.Add(data.ObjectId, teleportObject);
+        }
+
+        // Give every teleport access to the dictionary containing all teleports.
+        // This allows each teleport to find any other teleport by its ID.
+        foreach (SchematicTeleportObject teleportObject in teleportObjects.Values)
+            teleportObject.AllTeleports = teleportObjects;
+
+        return true;
+    }
+
+    public void Destroy() => Destroy(gameObject);
 
 	private void OnDestroy()
 	{
