@@ -8,6 +8,7 @@ using MEC;
 using ProjectMER.Configs;
 using ProjectMER.Events.Handlers.Internal;
 using ProjectMER.Features;
+using ProjectMER.Features.Extensions;
 
 namespace ProjectMER;
 
@@ -90,6 +91,9 @@ public class ProjectMER : Plugin<Config>
 
 			Logger.Debug("FileSystemWatcher enabled!");
 		}
+
+		// plugin loading is synchronous (minus exiled delaying 1 tick), so after all plugins loaded, try checking for Exiled and Exiled CI
+		Timing.CallDelayed(1, ExiledExtensions.TryInitialize);
 	}
 
 	private void OnMapFileChanged(object _, FileSystemEventArgs ev)
