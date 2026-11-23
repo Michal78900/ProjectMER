@@ -3,6 +3,7 @@ using MapGeneration;
 using NorthwoodLib.Pools;
 using ProjectMER.Features.Serializable;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ProjectMER.Features.Extensions;
 
@@ -47,5 +48,25 @@ public static class RoomExtensions
 			return Quaternion.Euler(eulerAngles);
 
 		return room.Transform.rotation * Quaternion.Euler(eulerAngles);
+	}
+	
+	public static Vector3 GetRelativePosition(this Room room, Vector3 position) 
+		=> room.Transform.InverseTransformPoint(position);
+
+	public static Quaternion GetRelativeRotation(this Room? room, Vector3 rotation)
+	{
+		if (Mathf.Approximately(rotation.x, -1f))
+			rotation.x = Random.Range(0f, 360f);
+
+		if (Mathf.Approximately(rotation.y, -1f))
+			rotation.y = Random.Range(0f, 360f);
+
+		if (Mathf.Approximately(rotation.z, -1f))
+			rotation.z = Random.Range(0f, 360f);
+
+		if (room == null)
+			return Quaternion.Euler(rotation);
+		
+		return room.Zone == FacilityZone.Surface ? Quaternion.Euler(rotation) : room.Transform.rotation * Quaternion.Euler(rotation);
 	}
 }
